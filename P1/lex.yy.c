@@ -836,9 +836,9 @@ static int yy_more_len = 0;
 #define YY_MORE_ADJ (yy_more_len)
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "miniC.l.l"
+#line 1 "miniC.l"
 
-#line 4 "miniC.l.l"
+#line 4 "miniC.l"
 #include "lexico1.h"
 int comprobar_entero();
 void error_lexico();
@@ -1062,7 +1062,7 @@ YY_DECL
 		}
 
 	{
-#line 15 "miniC.l.l"
+#line 15 "miniC.l"
 
 
 #line 1069 "lex.yy.c"
@@ -1140,167 +1140,167 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 17 "miniC.l.l"
+#line 17 "miniC.l"
 return VAR;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 18 "miniC.l.l"
+#line 18 "miniC.l"
 return CONST;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 19 "miniC.l.l"
+#line 19 "miniC.l"
 return INT;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 20 "miniC.l.l"
+#line 20 "miniC.l"
 return IF;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 21 "miniC.l.l"
+#line 21 "miniC.l"
 return ELSE;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 22 "miniC.l.l"
+#line 22 "miniC.l"
 return WHILE;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 23 "miniC.l.l"
+#line 23 "miniC.l"
 return PRINT;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 24 "miniC.l.l"
+#line 24 "miniC.l"
 return READ;
 	YY_BREAK
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 26 "miniC.l.l"
+#line 26 "miniC.l"
 ;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 28 "miniC.l.l"
+#line 28 "miniC.l"
 return ID;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 29 "miniC.l.l"
+#line 29 "miniC.l"
 return comprobar_entero();
 	YY_BREAK
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 31 "miniC.l.l"
+#line 31 "miniC.l"
 return CADENA;
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 35 "miniC.l.l"
+#line 35 "miniC.l"
 ;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 37 "miniC.l.l"
+#line 37 "miniC.l"
 {BEGIN COMENT; yymore();}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 38 "miniC.l.l"
+#line 38 "miniC.l"
 {BEGIN 0;}
 	YY_BREAK
 case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
-#line 39 "miniC.l.l"
+#line 39 "miniC.l"
 yymore();
 	YY_BREAK
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 40 "miniC.l.l"
+#line 40 "miniC.l"
 yymore();
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 43 "miniC.l.l"
+#line 43 "miniC.l"
 return SEPARADOR;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 44 "miniC.l.l"
+#line 44 "miniC.l"
 return COMMA;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 45 "miniC.l.l"
+#line 45 "miniC.l"
 return PLUSOP;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 46 "miniC.l.l"
+#line 46 "miniC.l"
 return MINUSOP;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 47 "miniC.l.l"
+#line 47 "miniC.l"
 return MULOP;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 48 "miniC.l.l"
+#line 48 "miniC.l"
 return DIVOP;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 49 "miniC.l.l"
+#line 49 "miniC.l"
 return ASSIGNOP;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 50 "miniC.l.l"
+#line 50 "miniC.l"
 return LPAREN;		
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 51 "miniC.l.l"
+#line 51 "miniC.l"
 return RPAREN;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 52 "miniC.l.l"
+#line 52 "miniC.l"
 return LLLAVE;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 53 "miniC.l.l"
+#line 53 "miniC.l"
 return RLLAVE;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 54 "miniC.l.l"
+#line 54 "miniC.l"
 return INTERR;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 55 "miniC.l.l"
+#line 55 "miniC.l"
 return DPUNTOS;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 57 "miniC.l.l"
+#line 57 "miniC.l"
 error_lexico();
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 60 "miniC.l.l"
+#line 60 "miniC.l"
 ECHO;
 	YY_BREAK
 #line 1307 "lex.yy.c"
@@ -2321,7 +2321,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 60 "miniC.l.l"
+#line 60 "miniC.l"
 
 
 void error_lexico() {
@@ -2334,14 +2334,3 @@ int comprobar_entero() {
     printf("ERROR: Entero fuera de rango en la linea %d\n", yylineno);
     return ERROR_TOKEN;
 }
-
-int main(){
-    int i;
-    while(i = yylex()){
-        /*if(i != ERROR_TOKEN)
-            printf(" TOKEN %d %s\n",i,yytext);*/
-    }
-    printf("FIN ANALISIS LEXICO\n");
-
-}
-

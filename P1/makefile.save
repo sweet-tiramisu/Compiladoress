@@ -1,0 +1,8 @@
+calcE: lex.yy.c miniC.tab.c miniC.tab.h lexico1.h
+	gcc lex.yy.c miniC.tab.c -lfl -o miniC
+miniC.tab.c miniC.tab.h: miniC.y
+	bison -d miniC.y
+lex.yy.c: miniC.l
+	flex miniC.l
+limpiar:
+	rm lex.yy.c calcE
