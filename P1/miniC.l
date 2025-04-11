@@ -1,7 +1,7 @@
 %s COMENT
 
 %{
-#include "lexico1.h"
+#include "miniC.tab.h"
 int comprobar_entero();
 void error_lexico();
 
@@ -16,19 +16,19 @@ escape              (\\\"|\\\\)
 
 var                                         return VAR;
 const                                       return CONST;
-int                                         return INT;
+int                                         return NUM;
 if                                          return IF;
 else                                        return ELSE;
 while                                       return WHILE;
 print                                       return PRINT;
 read                                        return READ;
 
-[ \n\t]+                                    ;
+[ \n\t\r]+                                  ;
 
-({letra}|_)({letra}|{digito}|_){0,30}       return ID;
+({letra}|_)({letra}|{digito}|_){0,30}       {yylval.lexema=strdup(yytext);return ID;}
 {entero}                                    return comprobar_entero();
 
-\"([^"]|{escape})*\"                        return CADENA;
+\"([^"]|{escape})*\"                        {yylval.lexema=strdup(yytext);return STR;}
 
 
 
@@ -41,12 +41,12 @@ read                                        return READ;
 
 
 ";"                                         return SEPARADOR;
-","                                         return COMMA;
+","                                         return COMA;
 "+"                                         return PLUSOP;
 "-"                                         return MINUSOP;
 "*"                                         return MULOP;
 "/"                                         return DIVOP;
-"="                                         return ASSIGNOP;
+"="                                         return ASIG;
 "("                                         return LPAREN;		
 ")"                                         return RPAREN;
 "{"                                         return LLLAVE;
@@ -64,8 +64,8 @@ void error_lexico() {
 }
 
 int comprobar_entero() {
-    if(atoll(yytext) < 2147483648 && atoll(yytext) > -2147483648)
-        return ENTERO;
+    if(atoll(yytext) < 2147483648)
+        return NUM;
     printf("ERROR: Entero fuera de rango en la linea %d\n", yylineno);
-    return ERROR_TOKEN;
+    return NUM;
 }

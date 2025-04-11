@@ -407,7 +407,7 @@ static const flex_int16_t yy_accept[190] =
 static const YY_CHAR yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    4,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    4,    1,    5,    1,    1,    1,    1,    1,    6,
         7,    8,    9,   10,   11,    1,   12,   13,   13,   13,
@@ -839,7 +839,7 @@ char *yytext;
 #line 1 "miniC.l"
 
 #line 4 "miniC.l"
-#include "lexico1.h"
+#include "miniC.tab.h"
 int comprobar_entero();
 void error_lexico();
 
@@ -1151,7 +1151,7 @@ return CONST;
 case 3:
 YY_RULE_SETUP
 #line 19 "miniC.l"
-return INT;
+return NUM;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -1187,7 +1187,7 @@ YY_RULE_SETUP
 case 10:
 YY_RULE_SETUP
 #line 28 "miniC.l"
-return ID;
+{yylval.lexema=strdup(yytext);return ID;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
@@ -1198,7 +1198,7 @@ case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
 #line 31 "miniC.l"
-return CADENA;
+{yylval.lexema=strdup(yytext);return STR;}
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
@@ -1236,7 +1236,7 @@ return SEPARADOR;
 case 19:
 YY_RULE_SETUP
 #line 44 "miniC.l"
-return COMMA;
+return COMA;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
@@ -1261,7 +1261,7 @@ return DIVOP;
 case 24:
 YY_RULE_SETUP
 #line 49 "miniC.l"
-return ASSIGNOP;
+return ASIG;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
@@ -2329,8 +2329,8 @@ void error_lexico() {
 }
 
 int comprobar_entero() {
-    if(atoll(yytext) < 2147483648 && atoll(yytext) > -2147483648)
-        return ENTERO;
+    if(atoll(yytext) < 2147483648)
+        return NUM;
     printf("ERROR: Entero fuera de rango en la linea %d\n", yylineno);
-    return ERROR_TOKEN;
+    return NUM;
 }

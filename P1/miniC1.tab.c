@@ -67,28 +67,16 @@
 
 
 /* First part of user prologue.  */
-#line 1 "miniC.y"
+#line 1 "miniC1.y"
 
-#include "listaSimbolos.h"
 #include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-Lista tablaSimb;
-int contCadenas=1;
-
 extern char *yytext;
 extern int yylineno;
 extern int yylex();
-void imprimirTablaS();
-int perteneceTablaS(char * c);
-void insertaTablaIdentificador(char * c, Tipo t);
-int esConstante(char * c);
-void insertaTablaString(char * c, Tipo t, int contCadenas);
+int main();
 void yyerror();
-void imprimeEnsamblador();
 
-
-#line 92 "miniC.tab.c"
+#line 80 "miniC1.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -111,7 +99,7 @@ void imprimeEnsamblador();
 #  endif
 # endif
 
-#include "miniC.tab.h"
+#include "miniC1.tab.h"
 /* Symbol kind.  */
 enum yysymbol_kind_t
 {
@@ -119,43 +107,42 @@ enum yysymbol_kind_t
   YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
   YYSYMBOL_YYerror = 1,                    /* error  */
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
-  YYSYMBOL_STR = 3,                        /* STR  */
-  YYSYMBOL_ID = 4,                         /* ID  */
-  YYSYMBOL_NUM = 5,                        /* NUM  */
-  YYSYMBOL_VAR = 6,                        /* VAR  */
-  YYSYMBOL_CONST = 7,                      /* CONST  */
-  YYSYMBOL_IF = 8,                         /* IF  */
-  YYSYMBOL_ELSE = 9,                       /* ELSE  */
-  YYSYMBOL_WHILE = 10,                     /* WHILE  */
-  YYSYMBOL_PRINT = 11,                     /* PRINT  */
-  YYSYMBOL_READ = 12,                      /* READ  */
-  YYSYMBOL_SEPARADOR = 13,                 /* SEPARADOR  */
-  YYSYMBOL_COMA = 14,                      /* COMA  */
-  YYSYMBOL_PLUSOP = 15,                    /* PLUSOP  */
-  YYSYMBOL_MINUSOP = 16,                   /* MINUSOP  */
-  YYSYMBOL_MULOP = 17,                     /* MULOP  */
-  YYSYMBOL_DIVOP = 18,                     /* DIVOP  */
-  YYSYMBOL_ASIG = 19,                      /* ASIG  */
-  YYSYMBOL_LPAREN = 20,                    /* LPAREN  */
-  YYSYMBOL_RPAREN = 21,                    /* RPAREN  */
-  YYSYMBOL_LLLAVE = 22,                    /* LLLAVE  */
-  YYSYMBOL_RLLAVE = 23,                    /* RLLAVE  */
-  YYSYMBOL_INTERR = 24,                    /* INTERR  */
-  YYSYMBOL_DPUNTOS = 25,                   /* DPUNTOS  */
-  YYSYMBOL_UMINUS = 26,                    /* UMINUS  */
+  YYSYMBOL_VAR = 3,                        /* VAR  */
+  YYSYMBOL_CONST = 4,                      /* CONST  */
+  YYSYMBOL_INT = 5,                        /* INT  */
+  YYSYMBOL_IF = 6,                         /* IF  */
+  YYSYMBOL_ELSE = 7,                       /* ELSE  */
+  YYSYMBOL_WHILE = 8,                      /* WHILE  */
+  YYSYMBOL_PRINT = 9,                      /* PRINT  */
+  YYSYMBOL_READ = 10,                      /* READ  */
+  YYSYMBOL_ID = 11,                        /* ID  */
+  YYSYMBOL_ENTERO = 12,                    /* ENTERO  */
+  YYSYMBOL_CADENA = 13,                    /* CADENA  */
+  YYSYMBOL_SEPARADOR = 14,                 /* SEPARADOR  */
+  YYSYMBOL_COMMA = 15,                     /* COMMA  */
+  YYSYMBOL_PLUSOP = 16,                    /* PLUSOP  */
+  YYSYMBOL_MINUSOP = 17,                   /* MINUSOP  */
+  YYSYMBOL_MULOP = 18,                     /* MULOP  */
+  YYSYMBOL_DIVOP = 19,                     /* DIVOP  */
+  YYSYMBOL_ASSIGNOP = 20,                  /* ASSIGNOP  */
+  YYSYMBOL_LPAREN = 21,                    /* LPAREN  */
+  YYSYMBOL_RPAREN = 22,                    /* RPAREN  */
+  YYSYMBOL_LLLAVE = 23,                    /* LLLAVE  */
+  YYSYMBOL_RLLAVE = 24,                    /* RLLAVE  */
+  YYSYMBOL_INTERR = 25,                    /* INTERR  */
+  YYSYMBOL_DPUNTOS = 26,                   /* DPUNTOS  */
   YYSYMBOL_YYACCEPT = 27,                  /* $accept  */
   YYSYMBOL_program = 28,                   /* program  */
-  YYSYMBOL_29_1 = 29,                      /* $@1  */
-  YYSYMBOL_declarations = 30,              /* declarations  */
-  YYSYMBOL_tipo = 31,                      /* tipo  */
-  YYSYMBOL_var_list = 32,                  /* var_list  */
-  YYSYMBOL_const_list = 33,                /* const_list  */
-  YYSYMBOL_statement_list = 34,            /* statement_list  */
-  YYSYMBOL_statement = 35,                 /* statement  */
-  YYSYMBOL_print_list = 36,                /* print_list  */
-  YYSYMBOL_print_item = 37,                /* print_item  */
-  YYSYMBOL_read_list = 38,                 /* read_list  */
-  YYSYMBOL_expression = 39                 /* expression  */
+  YYSYMBOL_declarations = 29,              /* declarations  */
+  YYSYMBOL_tipo = 30,                      /* tipo  */
+  YYSYMBOL_var_list = 31,                  /* var_list  */
+  YYSYMBOL_const_list = 32,                /* const_list  */
+  YYSYMBOL_statement_list = 33,            /* statement_list  */
+  YYSYMBOL_statement = 34,                 /* statement  */
+  YYSYMBOL_print_list = 35,                /* print_list  */
+  YYSYMBOL_print_item = 36,                /* print_item  */
+  YYSYMBOL_read_list = 37,                 /* read_list  */
+  YYSYMBOL_expression = 38                 /* expression  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -481,18 +468,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  3
+#define YYFINAL  4
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   117
+#define YYLAST   116
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  27
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  13
+#define YYNNTS  12
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  35
+#define YYNRULES  34
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  88
+#define YYNSTATES  87
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   281
@@ -544,10 +531,10 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    37,    37,    37,    40,    41,    42,    44,    47,    48,
-      51,    52,    55,    56,    59,    61,    62,    63,    64,    65,
-      66,    69,    70,    73,    74,    77,    79,    83,    84,    85,
-      86,    87,    88,    89,    90,    91
+       0,    14,    14,    15,    16,    17,    19,    21,    22,    24,
+      25,    27,    28,    30,    31,    32,    33,    34,    35,    36,
+      38,    39,    41,    42,    44,    45,    47,    48,    49,    50,
+      51,    52,    53,    54,    55
 };
 #endif
 
@@ -563,11 +550,11 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "STR", "ID", "NUM",
-  "VAR", "CONST", "IF", "ELSE", "WHILE", "PRINT", "READ", "SEPARADOR",
-  "COMA", "PLUSOP", "MINUSOP", "MULOP", "DIVOP", "ASIG", "LPAREN",
-  "RPAREN", "LLLAVE", "RLLAVE", "INTERR", "DPUNTOS", "UMINUS", "$accept",
-  "program", "$@1", "declarations", "tipo", "var_list", "const_list",
+  "\"end of file\"", "error", "\"invalid token\"", "VAR", "CONST", "INT",
+  "IF", "ELSE", "WHILE", "PRINT", "READ", "ID", "ENTERO", "CADENA",
+  "SEPARADOR", "COMMA", "PLUSOP", "MINUSOP", "MULOP", "DIVOP", "ASSIGNOP",
+  "LPAREN", "RPAREN", "LLLAVE", "RLLAVE", "INTERR", "DPUNTOS", "$accept",
+  "program", "declarations", "tipo", "var_list", "const_list",
   "statement_list", "statement", "print_list", "print_item", "read_list",
   "expression", YY_NULLPTR
 };
@@ -579,7 +566,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-60)
+#define YYPACT_NINF (-59)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -593,15 +580,15 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -60,    10,    24,   -60,    15,    18,    28,   -60,     0,    57,
-      57,     7,   -60,    52,    60,    46,    55,    63,    64,    70,
-     -60,   -60,   -60,   -60,    23,    48,    47,    50,    50,    50,
-      22,    76,    36,   -60,    87,    50,   -60,    93,   -60,   -60,
-      50,    50,    92,    71,    78,   -60,    -9,   -60,     5,   -60,
-      -5,   -60,   -60,     5,    79,   -60,    61,   -60,    50,    50,
-      50,    50,    41,    41,    22,    91,   107,    99,    50,   -60,
-      50,    51,    51,   -60,   -60,   104,   -60,   -60,   -60,   -60,
-     -60,     5,    56,    41,    50,   -60,    85,   -60
+       1,    -5,    18,    40,   -59,    16,   -59,     6,    49,    49,
+      11,   -59,    53,    62,    59,    66,    73,    84,    51,   -59,
+     -59,   -59,   -59,    23,    54,    38,    44,    44,    -6,    70,
+      44,    36,   -59,    77,    44,   -59,    95,   -59,   -59,    44,
+      44,    60,    67,   -59,    14,   -59,    85,   -59,    48,    81,
+     -59,   -59,    85,    87,    85,    50,    44,    44,    44,    44,
+      17,    17,    -6,    94,    98,    96,   -59,    44,   -59,    44,
+      85,    85,    85,    85,   104,   -59,   -59,   -59,   -59,   -59,
+      85,    32,    17,    44,   -59,    74,   -59
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -609,29 +596,29 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       2,     0,     0,     1,     0,     0,     0,     6,    13,     0,
-       0,     0,     7,     0,     0,     0,     0,     0,     0,     0,
-      13,     3,    12,     8,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     4,     0,     0,     5,     0,    34,    35,
-       0,     0,     0,     0,     0,    24,     0,    21,    23,    25,
-       0,    15,     9,    10,     0,    32,     0,    14,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    33,
-       0,    27,    28,    29,    30,    17,    18,    22,    19,    26,
-      20,    11,     0,     0,     0,    16,     0,    31
+       0,     0,     0,     0,     1,     0,     5,    12,     0,     0,
+       0,     6,     0,     0,     0,     0,     0,     0,     0,    12,
+       2,    11,     7,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     3,     0,     0,     4,     0,    33,    34,     0,
+       0,     0,     0,    23,     0,    20,    22,    24,     0,     0,
+      14,     8,     9,     0,    31,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    13,     0,    32,     0,
+      26,    27,    28,    29,    16,    17,    21,    18,    25,    19,
+      10,     0,     0,     0,    15,     0,    30
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -60,   -60,   -60,   -60,   105,   -60,   -60,    94,   -59,   -60,
-      53,   -60,   -27
+     -59,   -59,   -59,   103,   -59,   -59,    97,   -58,   -59,    52,
+     -59,   -26
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     1,     2,     8,    13,    24,    26,    11,    22,    46,
-      47,    50,    48
+       0,     2,     7,    12,    23,    25,    10,    21,    44,    45,
+      48,    46
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -639,67 +626,67 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      42,    43,    44,    75,    76,    64,     9,    10,    53,    66,
-       3,    15,    65,    55,    56,    16,    67,    17,    18,    19,
-      58,    59,    60,    61,    85,    45,    38,    39,     4,    20,
-      21,    71,    72,    73,    74,     5,    33,    34,    40,     6,
-      15,    81,    41,    82,    16,    15,    17,    18,    19,    16,
-       7,    17,    18,    19,    38,    39,    23,    86,    20,    51,
-      36,    37,    12,    20,    25,    27,    40,    35,    60,    61,
-      41,    58,    59,    60,    61,    28,    58,    59,    60,    61,
-      49,    84,    69,    29,    30,    70,    58,    59,    60,    61,
-      31,    52,    62,    58,    59,    60,    61,    54,    68,    63,
-      58,    59,    60,    61,    78,    57,    87,    58,    59,    60,
-      61,    79,    80,    83,    32,    14,     0,    77
+      41,    42,    74,    75,    49,    37,    38,    43,    52,     8,
+       9,    39,     1,    54,    55,    40,     3,    14,     4,    15,
+      16,    17,    18,    14,    84,    15,    16,    17,    18,    62,
+      70,    71,    72,    73,    19,    20,    63,    32,    33,     6,
+      19,    80,    14,    81,    15,    16,    17,    18,    56,    57,
+      58,    59,    35,    36,    11,    37,    38,    85,    83,    19,
+      50,    39,     5,    64,    22,    40,    56,    57,    58,    59,
+      65,    30,    68,    24,    34,    69,    56,    57,    58,    59,
+      26,    47,    60,    56,    57,    58,    59,    27,    51,    61,
+      56,    57,    58,    59,    28,    66,    86,    56,    57,    58,
+      59,    56,    57,    58,    59,    29,    53,    67,    77,    78,
+      79,    82,    13,     0,    76,     0,    31
 };
 
 static const yytype_int8 yycheck[] =
 {
-      27,    28,    29,    62,    63,    14,     6,     7,    35,    14,
-       0,     4,    21,    40,    41,     8,    21,    10,    11,    12,
-      15,    16,    17,    18,    83,     3,     4,     5,     4,    22,
-      23,    58,    59,    60,    61,    20,    13,    14,    16,    21,
-       4,    68,    20,    70,     8,     4,    10,    11,    12,     8,
-      22,    10,    11,    12,     4,     5,     4,    84,    22,    23,
-      13,    14,     5,    22,     4,    19,    16,    19,    17,    18,
-      20,    15,    16,    17,    18,    20,    15,    16,    17,    18,
-       4,    25,    21,    20,    20,    24,    15,    16,    17,    18,
-      20,     4,    21,    15,    16,    17,    18,     4,    19,    21,
-      15,    16,    17,    18,    13,    13,    21,    15,    16,    17,
-      18,     4,    13,     9,    20,    10,    -1,    64
+      26,    27,    60,    61,    30,    11,    12,    13,    34,     3,
+       4,    17,    11,    39,    40,    21,    21,     6,     0,     8,
+       9,    10,    11,     6,    82,     8,     9,    10,    11,    15,
+      56,    57,    58,    59,    23,    24,    22,    14,    15,    23,
+      23,    67,     6,    69,     8,     9,    10,    11,    16,    17,
+      18,    19,    14,    15,     5,    11,    12,    83,    26,    23,
+      24,    17,    22,    15,    11,    21,    16,    17,    18,    19,
+      22,    20,    22,    11,    20,    25,    16,    17,    18,    19,
+      21,    11,    22,    16,    17,    18,    19,    21,    11,    22,
+      16,    17,    18,    19,    21,    14,    22,    16,    17,    18,
+      19,    16,    17,    18,    19,    21,    11,    20,    14,    11,
+      14,     7,     9,    -1,    62,    -1,    19
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    28,    29,     0,     4,    20,    21,    22,    30,     6,
-       7,    34,     5,    31,    31,     4,     8,    10,    11,    12,
-      22,    23,    35,     4,    32,     4,    33,    19,    20,    20,
-      20,    20,    34,    13,    14,    19,    13,    14,     4,     5,
-      16,    20,    39,    39,    39,     3,    36,    37,    39,     4,
-      38,    23,     4,    39,     4,    39,    39,    13,    15,    16,
-      17,    18,    21,    21,    14,    21,    14,    21,    19,    21,
-      24,    39,    39,    39,    39,    35,    35,    37,    13,     4,
-      13,    39,    39,     9,    25,    35,    39,    21
+       0,    11,    28,    21,     0,    22,    23,    29,     3,     4,
+      33,     5,    30,    30,     6,     8,     9,    10,    11,    23,
+      24,    34,    11,    31,    11,    32,    21,    21,    21,    21,
+      20,    33,    14,    15,    20,    14,    15,    11,    12,    17,
+      21,    38,    38,    13,    35,    36,    38,    11,    37,    38,
+      24,    11,    38,    11,    38,    38,    16,    17,    18,    19,
+      22,    22,    15,    22,    15,    22,    14,    20,    22,    25,
+      38,    38,    38,    38,    34,    34,    36,    14,    11,    14,
+      38,    38,     7,    26,    34,    38,    22
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    27,    29,    28,    30,    30,    30,    31,    32,    32,
-      33,    33,    34,    34,    35,    35,    35,    35,    35,    35,
-      35,    36,    36,    37,    37,    38,    38,    39,    39,    39,
-      39,    39,    39,    39,    39,    39
+       0,    27,    28,    29,    29,    29,    30,    31,    31,    32,
+      32,    33,    33,    34,    34,    34,    34,    34,    34,    34,
+      35,    35,    36,    36,    37,    37,    38,    38,    38,    38,
+      38,    38,    38,    38,    38
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     0,     8,     5,     5,     0,     1,     1,     3,
-       3,     5,     2,     0,     4,     3,     7,     5,     5,     5,
-       5,     1,     3,     1,     1,     1,     3,     3,     3,     3,
-       3,     7,     2,     3,     1,     1
+       0,     2,     7,     5,     5,     0,     1,     1,     3,     3,
+       5,     2,     0,     4,     3,     7,     5,     5,     5,     5,
+       1,     3,     1,     1,     1,     3,     3,     3,     3,     3,
+       7,     2,     3,     1,     1
 };
 
 
@@ -1162,77 +1149,206 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 2: /* $@1: %empty  */
-#line 37 "miniC.y"
-                                {tablaSimb=creaLS();}
-#line 1169 "miniC.tab.c"
+  case 2: /* program: ID LPAREN RPAREN LLLAVE declarations statement_list RLLAVE  */
+#line 14 "miniC1.y"
+                                                                              {printf("Aplica program -> ID () { declarations statement_list } \n");}
+#line 1156 "miniC1.tab.c"
     break;
 
-  case 3: /* program: $@1 ID LPAREN RPAREN LLLAVE declarations statement_list RLLAVE  */
-#line 37 "miniC.y"
-                                                                                                                 {imprimirTablaS(); imprimeEnsamblador();liberaLS(tablaSimb); }
-#line 1175 "miniC.tab.c"
+  case 3: /* declarations: declarations VAR tipo var_list SEPARADOR  */
+#line 15 "miniC1.y"
+                                                                                  {printf("Aplica declarations -> declarations VAR tipo var_list ; \n");}
+#line 1162 "miniC1.tab.c"
     break;
 
-  case 8: /* var_list: ID  */
-#line 47 "miniC.y"
-                                                                                                                                                                {if (!perteneceTablaS((yyvsp[0].lexema))) insertaTablaIdentificador((yyvsp[0].lexema),VARIABLE); else printf("Error en linea %d : %s ya declarada \n",yylineno,(yyvsp[0].lexema));}
-#line 1181 "miniC.tab.c"
+  case 4: /* declarations: declarations CONST tipo const_list SEPARADOR  */
+#line 16 "miniC1.y"
+                                                                                  {printf("Aplica declarations -> declarations CONST tippo const_list ; } \n");}
+#line 1168 "miniC1.tab.c"
     break;
 
-  case 9: /* var_list: var_list COMA ID  */
-#line 48 "miniC.y"
-                                                                                                                                                        {if (!perteneceTablaS((yyvsp[0].lexema))) insertaTablaIdentificador((yyvsp[0].lexema),VARIABLE); else printf("Error en linea %d : %s ya declarada \n",yylineno,(yyvsp[0].lexema));}
-#line 1187 "miniC.tab.c"
+  case 5: /* declarations: %empty  */
+#line 17 "miniC1.y"
+                                                                                  {printf("Aplica declarations -> lambda \n");}
+#line 1174 "miniC1.tab.c"
     break;
 
-  case 10: /* const_list: ID ASIG expression  */
-#line 51 "miniC.y"
-                                                                                                                                                {if (!perteneceTablaS((yyvsp[-2].lexema))) insertaTablaIdentificador((yyvsp[-2].lexema),CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,(yyvsp[-2].lexema));}
-#line 1193 "miniC.tab.c"
+  case 6: /* tipo: INT  */
+#line 19 "miniC1.y"
+                                                                                    {printf("Aplica tipo -> ENTERO \n");}
+#line 1180 "miniC1.tab.c"
     break;
 
-  case 11: /* const_list: const_list COMA ID ASIG expression  */
-#line 52 "miniC.y"
-                                                                                                                                        {if (!perteneceTablaS((yyvsp[-2].lexema))) insertaTablaIdentificador((yyvsp[-2].lexema),CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,(yyvsp[-2].lexema));}
-#line 1199 "miniC.tab.c"
+  case 7: /* var_list: ID  */
+#line 21 "miniC1.y"
+                                                                                  {printf("Aplica var_list -> ID \n");}
+#line 1186 "miniC1.tab.c"
     break;
 
-  case 14: /* statement: ID ASIG expression SEPARADOR  */
-#line 59 "miniC.y"
-                                                                                                                           {if (!perteneceTablaS((yyvsp[-3].lexema))) printf("Error en linea %d : %s no declarada \n",yylineno,(yyvsp[-3].lexema));
-																					else if (esConstante((yyvsp[-3].lexema))) printf("Error en linea %d : %s es constante\n", yylineno, (yyvsp[-3].lexema));}
-#line 1206 "miniC.tab.c"
+  case 8: /* var_list: var_list COMMA ID  */
+#line 22 "miniC1.y"
+                                                                                  {printf("Aplica var_list -> var_list , ID \n");}
+#line 1192 "miniC1.tab.c"
     break;
 
-  case 24: /* print_item: STR  */
-#line 74 "miniC.y"
-                                                                                                                                                                {insertaTablaString((yyvsp[0].lexema),CADENA,contCadenas++);}
-#line 1212 "miniC.tab.c"
+  case 9: /* const_list: ID ASSIGNOP expression  */
+#line 24 "miniC1.y"
+                                                                                  {printf("Aplica const_list -> ID = expression \n");}
+#line 1198 "miniC1.tab.c"
     break;
 
-  case 25: /* read_list: ID  */
-#line 77 "miniC.y"
-                                                                                                                                                    {if (!perteneceTablaS((yyvsp[0].lexema))) printf("Error en linea %d : %s no declarada \n", yylineno,(yyvsp[0].lexema));
-																					else if (esConstante((yyvsp[0].lexema))) printf("Error en linea %d : %s es constante\n", yylineno, (yyvsp[0].lexema));}
-#line 1219 "miniC.tab.c"
+  case 10: /* const_list: const_list COMMA ID ASSIGNOP expression  */
+#line 25 "miniC1.y"
+                                                                                  {printf("Aplica const_list , ID = expression \n");}
+#line 1204 "miniC1.tab.c"
     break;
 
-  case 26: /* read_list: read_list COMA ID  */
-#line 79 "miniC.y"
-                                                                                                                                                {if (!perteneceTablaS((yyvsp[0].lexema))) printf("Error en linea %d : %s no declarada \n", yylineno, (yyvsp[0].lexema));
-																					else if (esConstante((yyvsp[0].lexema))) printf("Error en linea %d : %s es constante\n", yylineno, (yyvsp[0].lexema));}
-#line 1226 "miniC.tab.c"
+  case 11: /* statement_list: statement_list statement  */
+#line 27 "miniC1.y"
+                                                                                  {printf("Aplica statement_list -> statement_list statement \n");}
+#line 1210 "miniC1.tab.c"
     break;
 
-  case 34: /* expression: ID  */
-#line 90 "miniC.y"
-                                                                                                                                                                        {if (!perteneceTablaS((yyvsp[0].lexema))) printf("Error en linea %d : %s no declarada \n", yylineno, (yyvsp[0].lexema)); }
-#line 1232 "miniC.tab.c"
+  case 12: /* statement_list: %empty  */
+#line 28 "miniC1.y"
+                                                                                  {printf("Aplica statement_list -> lambda } \n");}
+#line 1216 "miniC1.tab.c"
+    break;
+
+  case 13: /* statement: ID ASSIGNOP expression SEPARADOR  */
+#line 30 "miniC1.y"
+                                                                                  {printf("Aplica statement -> ID = expression ; \n");}
+#line 1222 "miniC1.tab.c"
+    break;
+
+  case 14: /* statement: LLLAVE statement_list RLLAVE  */
+#line 31 "miniC1.y"
+                                                                                  {printf("Aplica statement -> { statement_list } \n");}
+#line 1228 "miniC1.tab.c"
+    break;
+
+  case 15: /* statement: IF LPAREN expression RPAREN statement ELSE statement  */
+#line 32 "miniC1.y"
+                                                                                  {printf("Aplica statement -> IF ( expression ) statement ELSE statement } \n");}
+#line 1234 "miniC1.tab.c"
+    break;
+
+  case 16: /* statement: IF LPAREN expression RPAREN statement  */
+#line 33 "miniC1.y"
+                                                                                  {printf("Aplica statement -> IF ( expression ) statement } \n");}
+#line 1240 "miniC1.tab.c"
+    break;
+
+  case 17: /* statement: WHILE LPAREN expression RPAREN statement  */
+#line 34 "miniC1.y"
+                                                                                  {printf("Aplica statement -> WHILE ( expression ) statement \n");}
+#line 1246 "miniC1.tab.c"
+    break;
+
+  case 18: /* statement: PRINT LPAREN print_list RPAREN SEPARADOR  */
+#line 35 "miniC1.y"
+                                                                                  {printf("Aplica statement -> PRINT ( print_list ) ; \n");}
+#line 1252 "miniC1.tab.c"
+    break;
+
+  case 19: /* statement: READ LPAREN read_list RPAREN SEPARADOR  */
+#line 36 "miniC1.y"
+                                                                                  {printf("Aplica statement -> READ ( read_list ) ; \n");}
+#line 1258 "miniC1.tab.c"
+    break;
+
+  case 20: /* print_list: print_item  */
+#line 38 "miniC1.y"
+                                                                                  {printf("Aplica print_list -> print_item \n");}
+#line 1264 "miniC1.tab.c"
+    break;
+
+  case 21: /* print_list: print_list COMMA print_item  */
+#line 39 "miniC1.y"
+                                                                                  {printf("Aplica print_list -> print_list , print_item \n");}
+#line 1270 "miniC1.tab.c"
+    break;
+
+  case 22: /* print_item: expression  */
+#line 41 "miniC1.y"
+                                                                                  {printf("Aplica print_item -> expression \n");}
+#line 1276 "miniC1.tab.c"
+    break;
+
+  case 23: /* print_item: CADENA  */
+#line 42 "miniC1.y"
+                                                                                  {printf("Aplica print_item -> CADENA \n");}
+#line 1282 "miniC1.tab.c"
+    break;
+
+  case 24: /* read_list: ID  */
+#line 44 "miniC1.y"
+                                                                                  {printf("Aplica read_list -> ID \n");}
+#line 1288 "miniC1.tab.c"
+    break;
+
+  case 25: /* read_list: read_list COMMA ID  */
+#line 45 "miniC1.y"
+                                                                                  {printf("Aplica read_list -> read_list , ID \n");}
+#line 1294 "miniC1.tab.c"
+    break;
+
+  case 26: /* expression: expression PLUSOP expression  */
+#line 47 "miniC1.y"
+                                                                                  {printf("Aplica expression -> expression + expression \n");}
+#line 1300 "miniC1.tab.c"
+    break;
+
+  case 27: /* expression: expression MINUSOP expression  */
+#line 48 "miniC1.y"
+                                                                                  {printf("Aplica expression -> expression - expression \n");}
+#line 1306 "miniC1.tab.c"
+    break;
+
+  case 28: /* expression: expression MULOP expression  */
+#line 49 "miniC1.y"
+                                                                                  {printf("Aplica expression -> expression * expression \n");}
+#line 1312 "miniC1.tab.c"
+    break;
+
+  case 29: /* expression: expression DIVOP expression  */
+#line 50 "miniC1.y"
+                                                                                  {printf("Aplica expression -> expression / expression \n");}
+#line 1318 "miniC1.tab.c"
+    break;
+
+  case 30: /* expression: LPAREN expression INTERR expression DPUNTOS expression RPAREN  */
+#line 51 "miniC1.y"
+                                                                                  {printf("Aplica expression -> ( expression ? expression : expression ) \n");}
+#line 1324 "miniC1.tab.c"
+    break;
+
+  case 31: /* expression: MINUSOP expression  */
+#line 52 "miniC1.y"
+                                                                                  {printf("Aplica expression -> - expression \n");}
+#line 1330 "miniC1.tab.c"
+    break;
+
+  case 32: /* expression: LPAREN expression RPAREN  */
+#line 53 "miniC1.y"
+                                                                                  {printf("Aplica expression -> ( expression ) \n");}
+#line 1336 "miniC1.tab.c"
+    break;
+
+  case 33: /* expression: ID  */
+#line 54 "miniC1.y"
+                                                                                  {printf("Aplica expression -> ID \n");}
+#line 1342 "miniC1.tab.c"
+    break;
+
+  case 34: /* expression: ENTERO  */
+#line 55 "miniC1.y"
+                                                                                  {printf("Aplica expression -> NUM \n");}
+#line 1348 "miniC1.tab.c"
     break;
 
 
-#line 1236 "miniC.tab.c"
+#line 1352 "miniC1.tab.c"
 
       default: break;
     }
@@ -1425,109 +1541,11 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 94 "miniC.y"
+#line 58 "miniC1.y"
+
 
 
 
 void yyerror() {
     printf("Error sintactico en token %s y linea %d\n", yytext, yylineno);
 }
-
-
-void imprimirTablaS() {
-	//printf("Imprimiendo lista de %d simbolos\n",longitudLS(tablaSimb));
-  	PosicionLista p = inicioLS(tablaSimb);
-  	while (p != finalLS(tablaSimb)) {
-    		Simbolo aux = recuperaLS(tablaSimb,p);
-    		char *tipo;
-    		switch (aux.tipo) {
-        		case VARIABLE:
-            			tipo = "variable";
-           		break;
-        		case CONSTANTE:
-            			tipo = "constante";
-            		break;
-				case CADENA:
-						tipo = "cadena";
-					break;
-        		default:
-            		tipo = "otro";
-    		}
-    		//printf("%s es %s\n",aux.nombre,tipo);    
-    		p = siguienteLS(tablaSimb,p);
-  	}
-}
-
-int perteneceTablaS(char * c) {
-	PosicionLista p = buscaLS(tablaSimb, c);
-	return (p != finalLS(tablaSimb));
-}
-
-void insertaTablaIdentificador(char * c, Tipo t) {
-	Simbolo aux;
-	aux.nombre = c;
-	aux.tipo = t;
-	aux.valor = 0;
-	//printf("El tipo es %d\n", aux.tipo);
-	//printf("Insertando variable %s en la tabla de simbolos\n", c);
-	if(t == CONSTANTE) {
-	  	insertaLS(tablaSimb, finalLS(tablaSimb), aux);
-	} else if (t == VARIABLE) {
-		insertaLS(tablaSimb, finalLS(tablaSimb), aux);
-	}
-}
-
-int esConstante(char * c) {
-	PosicionLista p = buscaLS(tablaSimb, c);
-	int cte = 0;
-	if(p!= finalLS(tablaSimb)){
-		Simbolo aux = recuperaLS(tablaSimb,p);
-		if(aux.tipo == CONSTANTE)
-			cte = 1;
-	}
-	
-	return cte;
-}
-
-void insertaTablaString(char * c, Tipo t, int contCadenas) {
-	/*Simbolo aux;
-	sprintf(aux.nombre, "str%d",contCadenas);
-	aux.tipo = t;
-	// aux.valor = c;
-	printf("Insertando cadena str%d -> (%s) en la tabla de simbolos\n", contCadenas, c);*/
-	Simbolo aux;
-	aux.nombre = c;
-	aux.tipo = t;
-	aux.valor = contCadenas;
-	contCadenas++;
-	insertaLS(tablaSimb, finalLS(tablaSimb), aux);
-}
-
-void imprimeEnsamblador(){
-	printf("##################\n");
-	printf("# Seccion de datos\n");
-	printf("\t.data\n\n");
-	PosicionLista p = inicioLS(tablaSimb);
-	//Primero imprimimos las cadenas
-	while(p!=finalLS(tablaSimb)){
-		Simbolo aux = recuperaLS(tablaSimb,p);
-		if(aux.tipo == CADENA){
-			printf("srt%d: \n\t.asciiz %s \n",aux.valor,aux.nombre);
-		}
-		p = siguienteLS(tablaSimb,p);
-	}
-
-	//Imprimo variables y constantes
-	p = inicioLS(tablaSimb);
-	while(p!=finalLS(tablaSimb)){
-		Simbolo aux = recuperaLS(tablaSimb,p);
-		if(aux.tipo == VARIABLE || aux.tipo == CONSTANTE){
-			printf("_%s: \n\t.word 0 \n",aux.nombre);
-		} 
-		p = siguienteLS(tablaSimb,p);
-	}
-
-}
-
-
-
