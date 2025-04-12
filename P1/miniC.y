@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 Lista tablaSimb;
 int contCadenas=1;
 
@@ -16,11 +17,22 @@ int esConstante(char * c);
 void insertaTablaString(char * c, Tipo t, int contCadenas);
 void yyerror();
 void imprimeEnsamblador();
+int registrosOcupados[10];
+char * obtenerReg();
+char * concatena(char * a, char * b);
 
 %}
+
+%code requires{
+	#include "listaCodigo.h"
+}
+
 %union{
 char *lexema;
+ListaC codigo;
 }
+
+%type <codigo> expression
 
 %token <lexema> STR ID NUM
 %token VAR CONST IF ELSE WHILE PRINT READ SEPARADOR COMA PLUSOP MINUSOP MULOP DIVOP ASIG LPAREN RPAREN LLLAVE RLLAVE INTERR DPUNTOS 
@@ -80,16 +92,31 @@ read_list   	: 	ID 															    {if (!perteneceTablaS($1)) printf("Error e
 																					else if (esConstante($3)) printf("Error en linea %d : %s es constante\n", yylineno, $3);}
 				;
 
-expression		: 	expression PLUSOP expression                                    
-                | 	expression MINUSOP expression                                   
-                | 	expression MULOP expression                                     
+expression		: 	expression PLUSOP expression              						{}                      
+                | 	expression MINUSOP expression                 {}                  
+                | 	expression MULOP expression                     {}                
                 |	expression DIVOP expression                                     
-                | 	LPAREN expression INTERR expression DPUNTOS expression RPAREN   
-                | 	MINUSOP expression %prec UMINUS                                             
-                | 	LPAREN expression RPAREN                                        
-				| 	ID 																{if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n", yylineno, $1); }
-                | 	NUM                                                          
-	;
+                | 	LPAREN expression INTERR expression DPUNTOS expression RPAREN   {}
+                | 	MINUSOP expression %prec UMINUS                                   {}          
+                | 	LPAREN expression RPAREN                                        {}
+				| 	ID 																{if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n", yylineno, $1); 
+																																								$$ = creaLC();
+																																								Operacion oper;
+																																								oper.op = "lw";
+																																								oper.res = obtenerReg();
+																																								oper.arg1 = concatena("_",$1);
+																																								oper.arg2 = NULL;
+																																								insertaLC($$,finalLC($$),oper);
+																																								guardaResLC($$,oper.res); }
+				| 	NUM             												{$$ = creaLC();
+																					 Operacion oper;
+																					 oper.op = "li";
+																					 oper.res = obtenerReg();
+																					 oper.arg1 = $1;
+																					 oper.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),oper);
+																					 guardaResLC($$,oper.res);}                                        
+				;
 
 %%
 
@@ -194,5 +221,25 @@ void imprimeEnsamblador(){
 
 }
 
+char * obtenerReg(){
+	char * registros[10] = {"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"};
+	// Algoritmo de búsqueda:
+	int i = 0;
+	while(i < 9 && registrosOcupados[i]){
+		i++;
+	}
 
+	if(!registrosOcupados[i]){
+		registrosOcupados[i] = 1;
+	}
 
+	return registros[i];
+
+}
+
+char * concatena(char * a, char * b){
+	int tamanoBuffer = strlen(a) + strlen(b) + 1; //malloc(sizeof(char)*34); //32 del tamaño del ID + "/0" + "_"
+	char * buffer = malloc(tamanoBuffer * sizeof(char));
+	sprintf(buffer, "%s%s", a, b);
+	return buffer;
+}
