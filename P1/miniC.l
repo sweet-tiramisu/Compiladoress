@@ -2,6 +2,7 @@
 
 %{
 #include "miniC.tab.h"
+#include "listaCodigo.h"
 int comprobar_entero();
 void error_lexico();
 

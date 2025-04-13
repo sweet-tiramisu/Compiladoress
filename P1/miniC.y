@@ -1,11 +1,13 @@
 %{
 #include "listaSimbolos.h"
+#include "listaCodigo.h"
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
 Lista tablaSimb;
 int contCadenas=1;
+int contadorEtiquetas = 1;
 
 extern char *yytext;
 extern int yylineno;
@@ -17,14 +19,20 @@ int esConstante(char * c);
 void insertaTablaString(char * c, Tipo t, int contCadenas);
 void yyerror();
 void imprimeEnsamblador();
+char * registros[10] = {"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"};
 int registrosOcupados[10];
 char * obtenerReg();
 char * concatena(char * a, char * b);
+void liberarReg(char * reg);
+void imprimirLC(ListaC codigo);
+char * obtenerEtiqueta();
+char * concatenaNumero (char * a, int num);
 
 %}
 
-%code requires{
+%code requires {
 	#include "listaCodigo.h"
+ 	typedef struct ListaCRep *ListaC;
 }
 
 %union{
@@ -32,7 +40,7 @@ char *lexema;
 ListaC codigo;
 }
 
-%type <codigo> expression
+%type <codigo> expression statement statement_list print_item print_list read_list
 
 %token <lexema> STR ID NUM
 %token VAR CONST IF ELSE WHILE PRINT READ SEPARADOR COMA PLUSOP MINUSOP MULOP DIVOP ASIG LPAREN RPAREN LLLAVE RLLAVE INTERR DPUNTOS 
@@ -64,41 +72,103 @@ const_list 		: 	ID ASIG expression 												{if (!perteneceTablaS($1)) insert
 				| 	const_list COMA ID ASIG expression 								{if (!perteneceTablaS($3)) insertaTablaIdentificador($3,CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,$3);}
 				;
 
-statement_list  :  	statement_list statement                                       
-                |   %empty                                                               
+statement_list  :  	statement_list statement                                        {}
+                |   %empty                                                          {}   
                 ;				
 
-statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n",yylineno,$1);
-																					else if (esConstante($1)) printf("Error en linea %d : %s es constante\n", yylineno, $1);}
-                |  	LLLAVE statement_list RLLAVE                                   
-                |  	IF LPAREN expression RPAREN statement ELSE statement           
-                |  	IF LPAREN expression RPAREN statement                          
-                |  	WHILE LPAREN expression RPAREN statement                       
-                |  	PRINT LPAREN print_list RPAREN SEPARADOR                       
-                | 	READ LPAREN read_list RPAREN SEPARADOR                         
+statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n",yylineno,$1); 
+																					else if (esConstante($1)) printf("Error en linea %d : %s es constante\n", yylineno, $1);
+																					$$ = $3;
+																					Operacion oper;
+																					oper.op = "sw";
+																					oper.res = recuperaResLC($3);
+																					oper.arg1 = concatena("_",$1);
+																					oper.arg2 = NULL;
+																					insertaLC($$,finalLC($$),oper);
+																					guardaResLC($$,oper.res); 
+
+																					imprimirLC($3);}
+                |  	LLLAVE statement_list RLLAVE                                   {}
+                |  	IF LPAREN expression RPAREN statement ELSE statement           {}
+                |  	IF LPAREN expression RPAREN statement                          {}
+                |  	WHILE LPAREN expression RPAREN statement                       {}
+                |  	PRINT LPAREN print_list RPAREN SEPARADOR                       {$$ = $3;}																				
+                | 	READ LPAREN read_list RPAREN SEPARADOR                         {}
                 ;
 
-print_list      : 	print_item                                                     
-                | 	print_list COMA print_item                                    
+print_list      : 	print_item                                                     {$$ = $1;}
+                | 	print_list COMA print_item                                     {}
                 ;
 
-print_item 		: 	expression
-				|   STR 															{insertaTablaString($1,CADENA,contCadenas++);}
+print_item 		: 	expression														{ }
+				|   STR 															{insertaTablaString($1,CADENA,contCadenas++);
+																					 $$ = creaLC();
+																					 Operacion operacion1;
+																					 operacion1.op = "li";
+																					 operacion1.res = "$v0";
+																					 operacion1.arg1 = "4";
+																					 operacion1.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),operacion1);
+																					 guardaResLC($$,operacion1.res); 
+																					 
+																					 Operacion operacion2;
+																					 operacion2.op = "la";
+																					 operacion2.res = "$a0";
+																					 operacion2.arg1 = concatenaNumero("$str", contCadenas);
+																					 operacion2.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),operacion2);
+																					 guardaResLC($$,operacion2.res); 
+
+																					 Operacion syscall;			
+																					 operacion2.op = "syscall";
+																					 operacion2.res = NULL;
+																					 operacion2.arg1 = NULL;
+																					 operacion2.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),syscall);
+																					 guardaResLC($$,syscall.res); 
+																					}
 				;
 
 read_list   	: 	ID 															    {if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n", yylineno,$1);
 																					else if (esConstante($1)) printf("Error en linea %d : %s es constante\n", yylineno, $1);}
-				| read_list COMA ID 												{if (!perteneceTablaS($3)) printf("Error en linea %d : %s no declarada \n", yylineno, $3);
+				| 	read_list COMA ID 												{if (!perteneceTablaS($3)) printf("Error en linea %d : %s no declarada \n", yylineno, $3);
 																					else if (esConstante($3)) printf("Error en linea %d : %s es constante\n", yylineno, $3);}
 				;
 
-expression		: 	expression PLUSOP expression              						{}                      
-                | 	expression MINUSOP expression                 {}                  
-                | 	expression MULOP expression                     {}                
-                |	expression DIVOP expression                                     
+expression		: 	expression PLUSOP expression              						{ $$ = $1; concatenaLC($$,$3);
+																					  Operacion oper; oper.op = "add"; oper.res = recuperaResLC($1);
+																					  oper.arg1 = recuperaResLC($1); oper.arg2 = recuperaResLC($3);
+																					  insertaLC($$,finalLC($$),oper); liberaLC($3);
+																					  liberarReg(oper.arg2); 
+																					}                    
+                | 	expression MINUSOP expression                 					{ $$ = $1; concatenaLC($$,$3);
+																					  Operacion oper; oper.op = "sub"; oper.res = recuperaResLC($1);
+																					  oper.arg1 = recuperaResLC($1); oper.arg2 = recuperaResLC($3);
+																					  insertaLC($$,finalLC($$),oper); liberaLC($3);
+																					  liberarReg(oper.arg2);
+																					}                  
+                | 	expression MULOP expression                     				{ $$ = $1; concatenaLC($$,$3);
+																					  Operacion oper; oper.op = "mul"; oper.res = recuperaResLC($1);
+																					  oper.arg1 = recuperaResLC($1); oper.arg2 = recuperaResLC($3);
+																					  insertaLC($$,finalLC($$),oper); liberaLC($3);
+																					  liberarReg(oper.arg2);
+																					}                
+                |	expression DIVOP expression                                     { $$ = $1; concatenaLC($$,$3);
+																					  Operacion oper; oper.op = "div"; oper.res = recuperaResLC($1);
+																					  oper.arg1 = recuperaResLC($1); oper.arg2 = recuperaResLC($3);
+																					  insertaLC($$,finalLC($$),oper); liberaLC($3);
+																					  liberarReg(oper.arg2);
+																					}
                 | 	LPAREN expression INTERR expression DPUNTOS expression RPAREN   {}
-                | 	MINUSOP expression %prec UMINUS                                   {}          
-                | 	LPAREN expression RPAREN                                        {}
+                | 	MINUSOP expression %prec UMINUS                                 {$$ = $2;
+																					 Operacion oper;
+																					 oper.op = "neg";
+																					 oper.res = recuperaResLC($2);
+																					 oper.arg1 = recuperaResLC($2);
+																					 oper.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),oper);
+																					 guardaResLC($$,oper.res);}          
+                | 	LPAREN expression RPAREN                                        {$$ = $2;}																					
 				| 	ID 																{if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n", yylineno, $1); 
 																																								$$ = creaLC();
 																																								Operacion oper;
@@ -222,10 +292,9 @@ void imprimeEnsamblador(){
 }
 
 char * obtenerReg(){
-	char * registros[10] = {"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"};
 	// Algoritmo de búsqueda:
 	int i = 0;
-	while(i < 9 && registrosOcupados[i]){
+	while(i < 10 && registrosOcupados[i]){
 		i++;
 	}
 
@@ -242,4 +311,37 @@ char * concatena(char * a, char * b){
 	char * buffer = malloc(tamanoBuffer * sizeof(char));
 	sprintf(buffer, "%s%s", a, b);
 	return buffer;
+}
+
+char * concatenaNumero (char * a, int num){
+	char buffer[32];
+	sprintf(buffer, "%s%d", a, num);
+	return strdup(buffer);
+}
+
+void liberarReg(char * reg) {
+    if (reg == NULL) return;
+
+    char * numero = &reg[2];				// tomo el dígito del registro: "$t7" -> 7
+    int nuevoRegistro = atoi(numero);		
+	registrosOcupados[nuevoRegistro] = 0;	// libero el reg seleccionado
+}
+
+void imprimirLC(ListaC codigo) {
+	PosicionListaC p = inicioLC(codigo);
+	while (p != finalLC(codigo)) {
+		Operacion oper = recuperaLC(codigo,p);
+		printf("%s",oper.op);
+		if (oper.res) printf(" %s",oper.res);
+		if (oper.arg1) printf(", %s",oper.arg1);
+		if (oper.arg2) printf(", %s",oper.arg2);
+		printf("\n");
+		p = siguienteLC(codigo,p);
+	}
+}
+
+char *obtenerEtiqueta() {
+	char aux[32];
+	sprintf(aux,"$l%d",contadorEtiquetas++);
+	return strdup(aux);
 }

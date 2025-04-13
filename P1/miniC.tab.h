@@ -45,11 +45,12 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 26 "miniC.y"
+#line 33 "miniC.y"
 
 	#include "listaCodigo.h"
+ 	typedef struct ListaCRep *ListaC;
 
-#line 53 "miniC.tab.h"
+#line 54 "miniC.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -92,12 +93,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 30 "miniC.y"
+#line 38 "miniC.y"
 
 char *lexema;
 ListaC codigo;
 
-#line 101 "miniC.tab.h"
+#line 102 "miniC.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
