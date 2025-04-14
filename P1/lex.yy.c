@@ -366,8 +366,7 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
  */
 #define YY_DO_BEFORE_ACTION \
 	(yytext_ptr) = yy_bp; \
-	(yytext_ptr) -= (yy_more_len); \
-	yyleng = (int) (yy_cp - (yytext_ptr)); \
+	yyleng = (int) (yy_cp - yy_bp); \
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
@@ -382,26 +381,26 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[190] =
     {   0,
-        0,    0,   16,   16,   33,   31,    9,    9,   31,   25,
-       26,   22,   20,   19,   21,   23,   11,   30,   18,   24,
-       29,   10,   10,   10,   10,   10,   10,   10,   10,   27,
-       28,   16,    9,    9,   16,   16,   16,   17,   16,   16,
-       16,   16,   11,   16,   16,   16,   16,   10,   10,   10,
-       10,   10,   10,   10,   10,   16,   16,    9,    0,   12,
-        0,   14,    0,   11,   10,   10,   10,    4,   10,   10,
-       10,   10,   10,   16,    9,   16,   12,   16,   17,   17,
-       15,   16,   11,   10,   10,   10,    4,   10,   10,   10,
-       10,   10,   12,    0,    0,   13,   10,   10,   10,    3,
+        0,    0,    3,    3,   33,   31,    6,    6,   31,   25,
+       26,   22,   20,   19,   21,   23,   16,   30,   18,   24,
+       29,   15,   15,   15,   15,   15,   15,   15,   15,   27,
+       28,    3,    3,    3,    3,    3,    3,    4,    3,    3,
+        3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
+        3,    3,    3,    3,    3,    3,    3,    6,    0,   17,
+        0,    1,    0,   16,   15,   15,   15,   10,   15,   15,
+       15,   15,   15,    3,    3,    3,    3,    3,    4,    4,
+        2,    3,    3,    3,    3,    3,    3,    3,    3,    3,
+        3,    3,   17,    0,    0,    5,   15,   15,   15,    9,
 
-       10,   10,    1,   10,   12,   16,   16,   13,   10,   10,
-       10,    3,   10,   10,    1,   10,   10,   10,    5,   10,
-        8,   10,   10,   10,    5,   10,    8,   10,   10,    2,
-        7,    6,   10,    2,    7,    6,   10,   10,   10,   10,
-       10,   10,   10,   10,   10,   10,   10,   10,   10,   10,
-       10,   10,   10,   10,   10,   10,   10,   10,   10,   10,
-       10,   10,   10,   10,   10,   10,   10,   10,   10,   10,
-       10,   10,   10,   10,   10,   10,   10,   10,   10,   10,
-       10,   10,   10,   10,   10,   10,   10,   10,    0
+       15,   15,    7,   15,    3,    3,    3,    3,    3,    3,
+        3,    3,    3,    3,    3,    3,   15,   15,   11,   15,
+       14,   15,    3,    3,    3,    3,    3,    3,   15,    8,
+       13,   12,    3,    3,    3,    3,   15,    3,   15,    3,
+       15,    3,   15,    3,   15,    3,   15,    3,   15,    3,
+       15,    3,   15,    3,   15,    3,   15,    3,   15,    3,
+       15,    3,   15,    3,   15,    3,   15,    3,   15,    3,
+       15,    3,   15,    3,   15,    3,   15,    3,   15,    3,
+       15,    3,   15,    3,   15,    3,   15,    3,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -817,7 +816,7 @@ static const flex_int16_t yy_chk[1385] =
 /* Table of booleans, true if rule could match eol. */
 static const flex_int32_t yy_rule_can_match_eol[33] =
     {   0,
-0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 
+0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
@@ -830,10 +829,8 @@ int yy_flex_debug = 0;
  * any uses of REJECT which flex missed.
  */
 #define REJECT reject_used_but_not_detected
-static int yy_more_flag = 0;
-static int yy_more_len = 0;
-#define yymore() ((yy_more_flag) = 1)
-#define YY_MORE_ADJ (yy_more_len)
+#define yymore() yymore_used_but_not_detected
+#define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "miniC.l"
@@ -841,11 +838,10 @@ char *yytext;
 #line 4 "miniC.l"
 #include "miniC.tab.h"
 #include "listaCodigo.h"
-int comprobar_entero();
 void error_lexico();
 
-#line 848 "lex.yy.c"
-#line 849 "lex.yy.c"
+#line 844 "lex.yy.c"
+#line 845 "lex.yy.c"
 
 #define INITIAL 0
 #define COMENT 1
@@ -1063,19 +1059,13 @@ YY_DECL
 		}
 
 	{
-#line 16 "miniC.l"
+#line 15 "miniC.l"
 
 
-#line 1070 "lex.yy.c"
+#line 1066 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
-		(yy_more_len) = 0;
-		if ( (yy_more_flag) )
-			{
-			(yy_more_len) = (int) ((yy_c_buf_p) - (yytext_ptr));
-			(yy_more_flag) = 0;
-			}
 		yy_cp = (yy_c_buf_p);
 
 		/* Support of yytext. */
@@ -1121,7 +1111,7 @@ yy_find_action:
 		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
 			{
 			int yyl;
-			for ( yyl = (yy_more_len); yyl < yyleng; ++yyl )
+			for ( yyl = 0; yyl < yyleng; ++yyl )
 				if ( yytext[yyl] == '\n' )
 					
     yylineno++;
@@ -1141,170 +1131,170 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 18 "miniC.l"
-return VAR;
+#line 17 "miniC.l"
+{BEGIN COMENT;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 19 "miniC.l"
-return CONST;
+#line 18 "miniC.l"
+{BEGIN 0;}
 	YY_BREAK
 case 3:
+/* rule 3 can match eol */
 YY_RULE_SETUP
-#line 20 "miniC.l"
-return NUM;
+#line 19 "miniC.l"
+;
 	YY_BREAK
 case 4:
+/* rule 4 can match eol */
 YY_RULE_SETUP
-#line 21 "miniC.l"
-return IF;
+#line 20 "miniC.l"
+;
 	YY_BREAK
 case 5:
+/* rule 5 can match eol */
 YY_RULE_SETUP
-#line 22 "miniC.l"
-return ELSE;
+#line 21 "miniC.l"
+;
 	YY_BREAK
 case 6:
+/* rule 6 can match eol */
 YY_RULE_SETUP
-#line 23 "miniC.l"
-return WHILE;
+#line 22 "miniC.l"
+;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 24 "miniC.l"
-return PRINT;
+return VAR;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 25 "miniC.l"
-return READ;
+return CONST;
 	YY_BREAK
 case 9:
-/* rule 9 can match eol */
 YY_RULE_SETUP
-#line 27 "miniC.l"
-;
+#line 26 "miniC.l"
+return NUM;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 29 "miniC.l"
-{yylval.lexema=strdup(yytext);return ID;}
+#line 27 "miniC.l"
+return IF;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 30 "miniC.l"
-return comprobar_entero();
+#line 28 "miniC.l"
+return ELSE;
 	YY_BREAK
 case 12:
-/* rule 12 can match eol */
 YY_RULE_SETUP
-#line 32 "miniC.l"
-{yylval.lexema=strdup(yytext);return STR;}
+#line 29 "miniC.l"
+return WHILE;
 	YY_BREAK
 case 13:
-/* rule 13 can match eol */
 YY_RULE_SETUP
-#line 36 "miniC.l"
-;
+#line 30 "miniC.l"
+return PRINT;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 38 "miniC.l"
-{BEGIN COMENT; yymore();}
+#line 31 "miniC.l"
+return READ;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 39 "miniC.l"
-{BEGIN 0;}
+#line 34 "miniC.l"
+{yylval.lexema=strdup(yytext);return ID;}
 	YY_BREAK
 case 16:
-/* rule 16 can match eol */
 YY_RULE_SETUP
-#line 40 "miniC.l"
-yymore();
+#line 35 "miniC.l"
+{yylval.lexema=strdup(yytext); if(atoll(yytext) > 2147483648) printf("ERROR: Entero fuera de rango en la linea %d\n", yylineno); return NUM; }
 	YY_BREAK
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 41 "miniC.l"
-yymore();
+#line 37 "miniC.l"
+{yylval.lexema=strdup(yytext);return STR;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 44 "miniC.l"
+#line 40 "miniC.l"
 return SEPARADOR;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 45 "miniC.l"
+#line 41 "miniC.l"
 return COMA;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 46 "miniC.l"
+#line 42 "miniC.l"
 return PLUSOP;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 47 "miniC.l"
+#line 43 "miniC.l"
 return MINUSOP;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 48 "miniC.l"
+#line 44 "miniC.l"
 return MULOP;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 49 "miniC.l"
+#line 45 "miniC.l"
 return DIVOP;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 50 "miniC.l"
+#line 46 "miniC.l"
 return ASIG;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 51 "miniC.l"
+#line 47 "miniC.l"
 return LPAREN;		
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 52 "miniC.l"
+#line 48 "miniC.l"
 return RPAREN;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 53 "miniC.l"
+#line 49 "miniC.l"
 return LLLAVE;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 54 "miniC.l"
+#line 50 "miniC.l"
 return RLLAVE;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 55 "miniC.l"
+#line 51 "miniC.l"
 return INTERR;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 56 "miniC.l"
+#line 52 "miniC.l"
 return DPUNTOS;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 58 "miniC.l"
+#line 54 "miniC.l"
 error_lexico();
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 61 "miniC.l"
+#line 57 "miniC.l"
 ECHO;
 	YY_BREAK
-#line 1308 "lex.yy.c"
+#line 1298 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMENT):
 	yyterminate();
@@ -2322,16 +2312,10 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 61 "miniC.l"
+#line 57 "miniC.l"
 
 
 void error_lexico() {
     printf("Carácter no reconocido en la linea %d: %s\n", yylineno, yytext);
 }
 
-int comprobar_entero() {
-    if(atoll(yytext) < 2147483648)
-        return NUM;
-    printf("ERROR: Entero fuera de rango en la linea %d\n", yylineno);
-    return NUM;
-}

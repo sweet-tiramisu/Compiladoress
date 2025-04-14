@@ -3,7 +3,6 @@
 %{
 #include "miniC.tab.h"
 #include "listaCodigo.h"
-int comprobar_entero();
 void error_lexico();
 
 %}
@@ -15,6 +14,13 @@ escape              (\\\"|\\\\)
 
 %%
 
+"/*"                                        {BEGIN COMENT;}
+<COMENT>[*]+[/]                             {BEGIN 0;}
+<COMENT>[^*]*                               ;
+<COMENT>[*]+[^/*]*                          ;
+"//"(.*)[\n]                                ;
+[ \n\t\r]+                                  ;
+
 var                                         return VAR;
 const                                       return CONST;
 int                                         return NUM;
@@ -24,21 +30,11 @@ while                                       return WHILE;
 print                                       return PRINT;
 read                                        return READ;
 
-[ \n\t\r]+                                  ;
 
 ({letra}|_)({letra}|{digito}|_){0,30}       {yylval.lexema=strdup(yytext);return ID;}
-{entero}                                    return comprobar_entero();
+{entero}                                    {yylval.lexema=strdup(yytext); if(atoll(yytext) > 2147483648) printf("ERROR: Entero fuera de rango en la linea %d\n", yylineno); return NUM; }
 
 \"([^"]|{escape})*\"                        {yylval.lexema=strdup(yytext);return STR;}
-
-
-
-"//"(.*)[\n]                                ;
-
-"/*"                                        {BEGIN COMENT; yymore();}
-<COMENT>[*]+[/]                             {BEGIN 0;}
-<COMENT>[^*]*                               yymore();
-<COMENT>[*]+[^/*]*                          yymore();
 
 
 ";"                                         return SEPARADOR;
@@ -62,11 +58,4 @@ read                                        return READ;
 
 void error_lexico() {
     printf("Carácter no reconocido en la linea %d: %s\n", yylineno, yytext);
-}
-
-int comprobar_entero() {
-    if(atoll(yytext) < 2147483648)
-        return NUM;
-    printf("ERROR: Entero fuera de rango en la linea %d\n", yylineno);
-    return NUM;
 }
