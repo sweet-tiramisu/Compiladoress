@@ -82,15 +82,16 @@ int contadorEtiquetas = 1;
 extern char *yytext;
 extern int yylineno;
 extern int yylex();
+extern int errores;
 void imprimirTablaS();
 int perteneceTablaS(char * c);
 void insertaTablaIdentificador(char * c, Tipo t);
 int esConstante(char * c);
 void insertaTablaString(char * c, Tipo t, int contCadenas);
 void yyerror();
-void imprimeEnsamblador();
+void imprimeLS();
 char * registros[10] = {"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"};
-int registrosOcupados[10];
+int registrosOcupados[10] = {0};
 char * obtenerReg();
 char * concatena(char * a, char * b);
 void liberarReg(char * reg);
@@ -99,7 +100,7 @@ char * obtenerEtiqueta();
 char * concatenaNumero (char * a, int num);
 
 
-#line 103 "miniC.tab.c"
+#line 104 "miniC.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -553,12 +554,12 @@ static const yytype_int8 yytranslate[] =
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_int16 yyrline[] =
 {
-       0,    57,    57,    57,    60,    61,    62,    64,    67,    68,
-      71,    72,    75,    76,    79,    91,    92,    93,    94,    95,
-      96,    99,   100,   103,   104,   132,   134,   138,   144,   150,
-     156,   162,   163,   171,   172,   181
+       0,    57,    57,    57,    60,    61,    65,    67,    70,    71,
+      74,    78,    84,    88,    91,   104,   105,   124,   142,   176,
+     177,   180,   181,   184,   210,   238,   267,   296,   302,   308,
+     314,   320,   321,   329,   330,   339
 };
 #endif
 
@@ -1176,53 +1177,83 @@ yyreduce:
   case 2: /* $@1: %empty  */
 #line 57 "miniC.y"
                                 {tablaSimb=creaLS();}
-#line 1180 "miniC.tab.c"
+#line 1181 "miniC.tab.c"
     break;
 
   case 3: /* program: $@1 ID LPAREN RPAREN LLLAVE declarations statement_list RLLAVE  */
 #line 57 "miniC.y"
-                                                                                                                 {imprimirTablaS(); imprimeEnsamblador();liberaLS(tablaSimb); }
-#line 1186 "miniC.tab.c"
+                                                                                                                 {/*imprimirTablaS();*/ concatenaLC((yyvsp[-2].codigo),(yyvsp[-1].codigo)); imprimeLS(); imprimirLC((yyvsp[-2].codigo)); liberaLS(tablaSimb); liberaLC((yyvsp[-2].codigo)); liberaLC((yyvsp[-1].codigo));}
+#line 1187 "miniC.tab.c"
+    break;
+
+  case 4: /* declarations: declarations VAR tipo var_list SEPARADOR  */
+#line 60 "miniC.y"
+                                                                                        {(yyval.codigo) = (yyvsp[-4].codigo);}
+#line 1193 "miniC.tab.c"
+    break;
+
+  case 5: /* declarations: declarations CONST tipo const_list SEPARADOR  */
+#line 61 "miniC.y"
+                                                                                                {(yyval.codigo) = (yyvsp[-4].codigo);
+																					concatenaLC((yyval.codigo),(yyvsp[-1].codigo));
+																					liberaLC((yyvsp[-1].codigo));
+																					}
+#line 1202 "miniC.tab.c"
+    break;
+
+  case 6: /* declarations: %empty  */
+#line 65 "miniC.y"
+                                                                                        {(yyval.codigo) = creaLC();}
+#line 1208 "miniC.tab.c"
     break;
 
   case 8: /* var_list: ID  */
-#line 67 "miniC.y"
+#line 70 "miniC.y"
                                                                                                                                                                 {if (!perteneceTablaS((yyvsp[0].lexema))) insertaTablaIdentificador((yyvsp[0].lexema),VARIABLE); else printf("Error en linea %d : %s ya declarada \n",yylineno,(yyvsp[0].lexema));}
-#line 1192 "miniC.tab.c"
+#line 1214 "miniC.tab.c"
     break;
 
   case 9: /* var_list: var_list COMA ID  */
-#line 68 "miniC.y"
+#line 71 "miniC.y"
                                                                                                                                                         {if (!perteneceTablaS((yyvsp[0].lexema))) insertaTablaIdentificador((yyvsp[0].lexema),VARIABLE); else printf("Error en linea %d : %s ya declarada \n",yylineno,(yyvsp[0].lexema));}
-#line 1198 "miniC.tab.c"
+#line 1220 "miniC.tab.c"
     break;
 
   case 10: /* const_list: ID ASIG expression  */
-#line 71 "miniC.y"
-                                                                                                                                                {if (!perteneceTablaS((yyvsp[-2].lexema))) insertaTablaIdentificador((yyvsp[-2].lexema),CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,(yyvsp[-2].lexema));}
-#line 1204 "miniC.tab.c"
+#line 74 "miniC.y"
+                                                                                                                                                {if (!perteneceTablaS((yyvsp[-2].lexema))) insertaTablaIdentificador((yyvsp[-2].lexema),CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,(yyvsp[-2].lexema));
+																					 (yyval.codigo) = creaLC();
+																					 liberaLC((yyvsp[0].codigo));
+																					}
+#line 1229 "miniC.tab.c"
     break;
 
   case 11: /* const_list: const_list COMA ID ASIG expression  */
-#line 72 "miniC.y"
-                                                                                                                                        {if (!perteneceTablaS((yyvsp[-2].lexema))) insertaTablaIdentificador((yyvsp[-2].lexema),CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,(yyvsp[-2].lexema));}
-#line 1210 "miniC.tab.c"
+#line 78 "miniC.y"
+                                                                                                                                        {if (!perteneceTablaS((yyvsp[-2].lexema))) insertaTablaIdentificador((yyvsp[-2].lexema),CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,(yyvsp[-2].lexema));
+																					 (yyval.codigo) = creaLC();
+																					 liberaLC((yyvsp[0].codigo));
+																					}
+#line 1238 "miniC.tab.c"
     break;
 
   case 12: /* statement_list: statement_list statement  */
-#line 75 "miniC.y"
-                                                                                        {}
-#line 1216 "miniC.tab.c"
+#line 84 "miniC.y"
+                                                                                        {(yyval.codigo) = (yyvsp[-1].codigo);
+																					 concatenaLC((yyval.codigo),(yyvsp[0].codigo));
+																					 liberaLC((yyvsp[0].codigo));
+																					}
+#line 1247 "miniC.tab.c"
     break;
 
   case 13: /* statement_list: %empty  */
-#line 76 "miniC.y"
-                                                                                    {}
-#line 1222 "miniC.tab.c"
+#line 88 "miniC.y"
+                                                                                                                                                {(yyval.codigo) = creaLC();}
+#line 1253 "miniC.tab.c"
     break;
 
   case 14: /* statement: ID ASIG expression SEPARADOR  */
-#line 79 "miniC.y"
+#line 91 "miniC.y"
                                                                                                                            {if (!perteneceTablaS((yyvsp[-3].lexema))) printf("Error en linea %d : %s no declarada \n",yylineno,(yyvsp[-3].lexema)); 
 																					else if (esConstante((yyvsp[-3].lexema))) printf("Error en linea %d : %s es constante\n", yylineno, (yyvsp[-3].lexema));
 																					(yyval.codigo) = (yyvsp[-1].codigo);
@@ -1232,68 +1263,162 @@ yyreduce:
 																					oper.arg1 = concatena("_",(yyvsp[-3].lexema));
 																					oper.arg2 = NULL;
 																					insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper);
-																					guardaResLC((yyval.codigo),oper.res); 
+																					liberarReg(oper.res);
+																					//guardaResLC($$,oper.res); 
 
-																					imprimirLC((yyvsp[-1].codigo));}
-#line 1239 "miniC.tab.c"
+																					/*imprimirLC($3);*/}
+#line 1271 "miniC.tab.c"
     break;
 
   case 15: /* statement: LLLAVE statement_list RLLAVE  */
-#line 91 "miniC.y"
-                                                                                       {}
-#line 1245 "miniC.tab.c"
+#line 104 "miniC.y"
+                                                                                       {(yyval.codigo) = (yyvsp[-1].codigo);}
+#line 1277 "miniC.tab.c"
     break;
 
   case 16: /* statement: IF LPAREN expression RPAREN statement ELSE statement  */
-#line 92 "miniC.y"
-                                                                                       {}
-#line 1251 "miniC.tab.c"
+#line 105 "miniC.y"
+                                                                                       {(yyval.codigo) = (yyvsp[-4].codigo);
+																					Operacion oper;
+																					oper.op = "beqz";
+																					oper.res = recuperaResLC((yyvsp[-4].codigo));
+																					oper.arg1 = obtenerEtiqueta();
+																					oper.arg2 = NULL;
+																					insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper);
+																					concatenaLC((yyval.codigo),(yyvsp[-2].codigo));
+																					liberaLC((yyvsp[-2].codigo));
+																					
+																					Operacion operacion2;
+																					operacion2.op = "etiqueta";
+																					operacion2.res = oper.arg1;
+																					operacion2.arg1 = NULL;
+																					operacion2.arg2 = NULL;
+																					insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion2);
+																					liberarReg(recuperaResLC((yyval.codigo)));
+																						
+																					}
+#line 1301 "miniC.tab.c"
     break;
 
   case 17: /* statement: IF LPAREN expression RPAREN statement  */
-#line 93 "miniC.y"
-                                                                                       {}
-#line 1257 "miniC.tab.c"
+#line 124 "miniC.y"
+                                                                                       {(yyval.codigo) = (yyvsp[-2].codigo);
+																					Operacion oper;
+																					oper.op = "beqz";
+																					oper.res = recuperaResLC((yyvsp[-2].codigo));
+																					oper.arg1 = obtenerEtiqueta();
+																					oper.arg2 = NULL;
+																					insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper);
+																					concatenaLC((yyval.codigo),(yyvsp[0].codigo));
+																					liberaLC((yyvsp[0].codigo));
+
+																					Operacion operacion2;
+																					operacion2.op = "etiqueta";
+																					operacion2.res = oper.arg1;
+																					operacion2.arg1 = NULL;
+																					operacion2.arg2 = NULL;
+																					insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion2);
+																					liberarReg(recuperaResLC((yyval.codigo)));
+																					}
+#line 1324 "miniC.tab.c"
     break;
 
   case 18: /* statement: WHILE LPAREN expression RPAREN statement  */
-#line 94 "miniC.y"
-                                                                                       {}
-#line 1263 "miniC.tab.c"
+#line 142 "miniC.y"
+                                                                                       {(yyval.codigo) = creaLC();
+																					Operacion oper;
+																					oper.op = "etiqueta1";
+																					oper.res = obtenerEtiqueta();
+																					oper.arg1 = NULL;
+																					oper.arg2 = NULL;
+																					insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper);
+																					concatenaLC((yyval.codigo),(yyvsp[-2].codigo));
+																				
+																					Operacion operacion2;
+																					operacion2.op = "beqz";
+																					operacion2.res = recuperaResLC((yyvsp[-2].codigo));
+																					operacion2.arg1 = obtenerEtiqueta();
+																					operacion2.arg2 = NULL;
+																					insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion2);
+																					liberarReg(recuperaResLC((yyvsp[-2].codigo)));
+																					concatenaLC((yyval.codigo),(yyvsp[0].codigo));
+																					liberaLC((yyvsp[0].codigo));
+																					
+																					Operacion operacion3;
+																					operacion3.op = "b";
+																					operacion3.res = oper.res;
+																					operacion3.arg1 = NULL;
+																					operacion3.arg2 = NULL;
+																					insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion3);
+																																										
+																					Operacion operacion4;
+																					operacion4.op = "etiqueta2";
+																					operacion4.res = operacion2.arg1;
+																					operacion4.arg1 = NULL;
+																					operacion4.arg2 = NULL;
+																					insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion3);
+																					
+																				   }
+#line 1363 "miniC.tab.c"
     break;
 
   case 19: /* statement: PRINT LPAREN print_list RPAREN SEPARADOR  */
-#line 95 "miniC.y"
+#line 176 "miniC.y"
                                                                                        {(yyval.codigo) = (yyvsp[-2].codigo);}
-#line 1269 "miniC.tab.c"
+#line 1369 "miniC.tab.c"
     break;
 
   case 20: /* statement: READ LPAREN read_list RPAREN SEPARADOR  */
-#line 96 "miniC.y"
-                                                                                       {}
-#line 1275 "miniC.tab.c"
+#line 177 "miniC.y"
+                                                                                       {(yyval.codigo) = (yyvsp[-2].codigo);}
+#line 1375 "miniC.tab.c"
     break;
 
   case 21: /* print_list: print_item  */
-#line 99 "miniC.y"
+#line 180 "miniC.y"
                                                                                        {(yyval.codigo) = (yyvsp[0].codigo);}
-#line 1281 "miniC.tab.c"
+#line 1381 "miniC.tab.c"
     break;
 
   case 22: /* print_list: print_list COMA print_item  */
-#line 100 "miniC.y"
-                                                                                       {}
-#line 1287 "miniC.tab.c"
+#line 181 "miniC.y"
+                                                                                       {(yyval.codigo) = (yyvsp[-2].codigo); concatenaLC((yyval.codigo),(yyvsp[0].codigo));}
+#line 1387 "miniC.tab.c"
     break;
 
   case 23: /* print_item: expression  */
-#line 103 "miniC.y"
-                                                                                                                                                        { }
-#line 1293 "miniC.tab.c"
+#line 184 "miniC.y"
+                                                                                                                                                   {(yyval.codigo) = (yyvsp[0].codigo);
+																					 Operacion operacion1;
+																					 operacion1.op = "li";
+																					 operacion1.res = "$v0";
+																					 operacion1.arg1 = "1";
+																					 operacion1.arg2 = NULL;
+																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion1);
+																					 //guardaResLC($$,operacion1.res); 
+																					 
+																					 Operacion operacion2;
+																					 operacion2.op = "move";
+																					 operacion2.res = "$a0";
+																					 operacion2.arg1 = recuperaResLC((yyvsp[0].codigo));
+																					 operacion2.arg2 = NULL;
+																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion2);
+																					 //guardaResLC($$,operacion2.res); 
+
+																					 Operacion syscall;			
+																					 syscall.op = "syscall";
+																					 syscall.res = NULL;
+																					 syscall.arg1 = NULL;
+																					 syscall.arg2 = NULL;
+																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),syscall);
+																					 //guardaResLC($$,syscall.res); 
+																					 liberarReg(recuperaResLC((yyvsp[0].codigo)));
+																					}
+#line 1418 "miniC.tab.c"
     break;
 
   case 24: /* print_item: STR  */
-#line 104 "miniC.y"
+#line 210 "miniC.y"
                                                                                                                                                                 {insertaTablaString((yyvsp[0].lexema),CADENA,contCadenas++);
 																					 (yyval.codigo) = creaLC();
 																					 Operacion operacion1;
@@ -1302,7 +1427,7 @@ yyreduce:
 																					 operacion1.arg1 = "4";
 																					 operacion1.arg2 = NULL;
 																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion1);
-																					 guardaResLC((yyval.codigo),operacion1.res); 
+																					 //guardaResLC($$,operacion1.res); 
 																					 
 																					 Operacion operacion2;
 																					 operacion2.op = "la";
@@ -1310,85 +1435,137 @@ yyreduce:
 																					 operacion2.arg1 = concatenaNumero("$str", contCadenas);
 																					 operacion2.arg2 = NULL;
 																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion2);
-																					 guardaResLC((yyval.codigo),operacion2.res); 
+																					 //guardaResLC($$,operacion2.res); 
 
 																					 Operacion syscall;			
-																					 operacion2.op = "syscall";
-																					 operacion2.res = NULL;
-																					 operacion2.arg1 = NULL;
-																					 operacion2.arg2 = NULL;
+																					 syscall.op = "syscall";
+																					 syscall.res = NULL;
+																					 syscall.arg1 = NULL;
+																					 syscall.arg2 = NULL;
 																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),syscall);
-																					 guardaResLC((yyval.codigo),syscall.res); 
+																					 //guardaResLC($$,syscall.res); 
 																					}
-#line 1324 "miniC.tab.c"
+#line 1449 "miniC.tab.c"
     break;
 
   case 25: /* read_list: ID  */
-#line 132 "miniC.y"
+#line 238 "miniC.y"
                                                                                                                                                     {if (!perteneceTablaS((yyvsp[0].lexema))) printf("Error en linea %d : %s no declarada \n", yylineno,(yyvsp[0].lexema));
-																					else if (esConstante((yyvsp[0].lexema))) printf("Error en linea %d : %s es constante\n", yylineno, (yyvsp[0].lexema));}
-#line 1331 "miniC.tab.c"
+																					else if (esConstante((yyvsp[0].lexema))) printf("Error en linea %d : %s es constante\n", yylineno, (yyvsp[0].lexema));
+																					 (yyval.codigo) = creaLC();
+																					 Operacion operacion1;
+																					 operacion1.op = "li";
+																					 operacion1.res = "$v0";
+																					 operacion1.arg1 = "5";
+																					 operacion1.arg2 = NULL;
+																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion1);
+																					 //guardaResLC($$,operacion1.res); 
+																					 
+																					 Operacion syscall;			
+																					 syscall.op = "syscall";
+																					 syscall.res = NULL;
+																					 syscall.arg1 = NULL;
+																					 syscall.arg2 = NULL;
+																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),syscall);
+																					 //guardaResLC($$,syscall.res); 
+																					 
+																					 Operacion operacion2;
+																					 operacion2.op = "sw";
+																					 operacion2.res = "$v0";
+																					 operacion2.arg1 = concatena("_", (yyvsp[0].lexema));
+																					 operacion2.arg2 = NULL;
+																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion2);
+																					 //guardaResLC($$,operacion2.res); 
+
+																					 
+																					}
+#line 1483 "miniC.tab.c"
     break;
 
   case 26: /* read_list: read_list COMA ID  */
-#line 134 "miniC.y"
+#line 267 "miniC.y"
                                                                                                                                                         {if (!perteneceTablaS((yyvsp[0].lexema))) printf("Error en linea %d : %s no declarada \n", yylineno, (yyvsp[0].lexema));
-																					else if (esConstante((yyvsp[0].lexema))) printf("Error en linea %d : %s es constante\n", yylineno, (yyvsp[0].lexema));}
-#line 1338 "miniC.tab.c"
+																					else if (esConstante((yyvsp[0].lexema))) printf("Error en linea %d : %s es constante\n", yylineno, (yyvsp[0].lexema));
+																					 (yyval.codigo) = (yyvsp[-2].codigo);
+																					 Operacion operacion1;
+																					 operacion1.op = "li";
+																					 operacion1.res = "$v0";
+																					 operacion1.arg1 = "5";
+																					 operacion1.arg2 = NULL;
+																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion1);
+																					 //guardaResLC($$,operacion1.res); 
+																					 
+																					 Operacion syscall;			
+																					 syscall.op = "syscall";
+																					 syscall.res = NULL;
+																					 syscall.arg1 = NULL;
+																					 syscall.arg2 = NULL;
+																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),syscall);
+																					 //guardaResLC($$,syscall.res); 
+																					 
+																					 Operacion operacion2;
+																					 operacion2.op = "sw";
+																					 operacion2.res = "$v0";
+																					 operacion2.arg1 = concatena("_", (yyvsp[0].lexema));
+																					 operacion2.arg2 = NULL;
+																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),operacion2);
+																					 //guardaResLC($$,operacion2.res); 
+																					}
+#line 1515 "miniC.tab.c"
     break;
 
   case 27: /* expression: expression PLUSOP expression  */
-#line 138 "miniC.y"
+#line 296 "miniC.y"
                                                                                                                         { (yyval.codigo) = (yyvsp[-2].codigo); concatenaLC((yyval.codigo),(yyvsp[0].codigo));
 																					  Operacion oper; oper.op = "add"; oper.res = recuperaResLC((yyvsp[-2].codigo));
 																					  oper.arg1 = recuperaResLC((yyvsp[-2].codigo)); oper.arg2 = recuperaResLC((yyvsp[0].codigo));
 																					  insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper); liberaLC((yyvsp[0].codigo));
 																					  liberarReg(oper.arg2); 
 																					}
-#line 1349 "miniC.tab.c"
+#line 1526 "miniC.tab.c"
     break;
 
   case 28: /* expression: expression MINUSOP expression  */
-#line 144 "miniC.y"
+#line 302 "miniC.y"
                                                                                                         { (yyval.codigo) = (yyvsp[-2].codigo); concatenaLC((yyval.codigo),(yyvsp[0].codigo));
 																					  Operacion oper; oper.op = "sub"; oper.res = recuperaResLC((yyvsp[-2].codigo));
 																					  oper.arg1 = recuperaResLC((yyvsp[-2].codigo)); oper.arg2 = recuperaResLC((yyvsp[0].codigo));
 																					  insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper); liberaLC((yyvsp[0].codigo));
 																					  liberarReg(oper.arg2);
 																					}
-#line 1360 "miniC.tab.c"
+#line 1537 "miniC.tab.c"
     break;
 
   case 29: /* expression: expression MULOP expression  */
-#line 150 "miniC.y"
+#line 308 "miniC.y"
                                                                                                         { (yyval.codigo) = (yyvsp[-2].codigo); concatenaLC((yyval.codigo),(yyvsp[0].codigo));
 																					  Operacion oper; oper.op = "mul"; oper.res = recuperaResLC((yyvsp[-2].codigo));
 																					  oper.arg1 = recuperaResLC((yyvsp[-2].codigo)); oper.arg2 = recuperaResLC((yyvsp[0].codigo));
 																					  insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper); liberaLC((yyvsp[0].codigo));
 																					  liberarReg(oper.arg2);
 																					}
-#line 1371 "miniC.tab.c"
+#line 1548 "miniC.tab.c"
     break;
 
   case 30: /* expression: expression DIVOP expression  */
-#line 156 "miniC.y"
+#line 314 "miniC.y"
                                                                                         { (yyval.codigo) = (yyvsp[-2].codigo); concatenaLC((yyval.codigo),(yyvsp[0].codigo));
 																					  Operacion oper; oper.op = "div"; oper.res = recuperaResLC((yyvsp[-2].codigo));
 																					  oper.arg1 = recuperaResLC((yyvsp[-2].codigo)); oper.arg2 = recuperaResLC((yyvsp[0].codigo));
 																					  insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper); liberaLC((yyvsp[0].codigo));
 																					  liberarReg(oper.arg2);
 																					}
-#line 1382 "miniC.tab.c"
+#line 1559 "miniC.tab.c"
     break;
 
   case 31: /* expression: LPAREN expression INTERR expression DPUNTOS expression RPAREN  */
-#line 162 "miniC.y"
+#line 320 "miniC.y"
                                                                                         {}
-#line 1388 "miniC.tab.c"
+#line 1565 "miniC.tab.c"
     break;
 
   case 32: /* expression: MINUSOP expression  */
-#line 163 "miniC.y"
+#line 321 "miniC.y"
                                                                                         {(yyval.codigo) = (yyvsp[0].codigo);
 																					 Operacion oper;
 																					 oper.op = "neg";
@@ -1397,17 +1574,17 @@ yyreduce:
 																					 oper.arg2 = NULL;
 																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper);
 																					 guardaResLC((yyval.codigo),oper.res);}
-#line 1401 "miniC.tab.c"
+#line 1578 "miniC.tab.c"
     break;
 
   case 33: /* expression: LPAREN expression RPAREN  */
-#line 171 "miniC.y"
+#line 329 "miniC.y"
                                                                                         {(yyval.codigo) = (yyvsp[-1].codigo);}
-#line 1407 "miniC.tab.c"
+#line 1584 "miniC.tab.c"
     break;
 
   case 34: /* expression: ID  */
-#line 172 "miniC.y"
+#line 330 "miniC.y"
                                                                                                                                                                         {if (!perteneceTablaS((yyvsp[0].lexema))) printf("Error en linea %d : %s no declarada \n", yylineno, (yyvsp[0].lexema)); 
 																																								(yyval.codigo) = creaLC();
 																																								Operacion oper;
@@ -1417,11 +1594,11 @@ yyreduce:
 																																								oper.arg2 = NULL;
 																																								insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper);
 																																								guardaResLC((yyval.codigo),oper.res); }
-#line 1421 "miniC.tab.c"
+#line 1598 "miniC.tab.c"
     break;
 
   case 35: /* expression: NUM  */
-#line 181 "miniC.y"
+#line 339 "miniC.y"
                                                                                                                                                         {(yyval.codigo) = creaLC();
 																					 Operacion oper;
 																					 oper.op = "li";
@@ -1430,11 +1607,11 @@ yyreduce:
 																					 oper.arg2 = NULL;
 																					 insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper);
 																					 guardaResLC((yyval.codigo),oper.res);}
-#line 1434 "miniC.tab.c"
+#line 1611 "miniC.tab.c"
     break;
 
 
-#line 1438 "miniC.tab.c"
+#line 1615 "miniC.tab.c"
 
       default: break;
     }
@@ -1627,7 +1804,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 191 "miniC.y"
+#line 349 "miniC.y"
 
 
 
@@ -1705,7 +1882,7 @@ void insertaTablaString(char * c, Tipo t, int contCadenas) {
 	insertaLS(tablaSimb, finalLS(tablaSimb), aux);
 }
 
-void imprimeEnsamblador(){
+void imprimeLS(){	// .data del programa
 	printf("##################\n");
 	printf("# Seccion de datos\n");
 	printf("\t.data\n\n");
@@ -1714,7 +1891,7 @@ void imprimeEnsamblador(){
 	while(p!=finalLS(tablaSimb)){
 		Simbolo aux = recuperaLS(tablaSimb,p);
 		if(aux.tipo == CADENA){
-			printf("srt%d: \n\t.asciiz %s \n",aux.valor,aux.nombre);
+			printf("str%d: \n\t.asciiz %s \n",aux.valor,aux.nombre);
 		}
 		p = siguienteLS(tablaSimb,p);
 	}
@@ -1747,10 +1924,13 @@ char * obtenerReg(){
 }
 
 char * concatena(char * a, char * b){
-	int tamanoBuffer = strlen(a) + strlen(b) + 1; //malloc(sizeof(char)*34); //32 del tamaño del ID + "/0" + "_"
+	/*int tamanoBuffer = strlen(a) + strlen(b) + 1; //malloc(sizeof(char)*34); //32 del tamaño del ID + "/0" + "_"
 	char * buffer = malloc(tamanoBuffer * sizeof(char));
 	sprintf(buffer, "%s%s", a, b);
-	return buffer;
+	return buffer;*/
+	char buffer[40];
+	sprintf(buffer, "%s%s", a, b);
+	return strdup(buffer);
 }
 
 char * concatenaNumero (char * a, int num){
@@ -1764,20 +1944,33 @@ void liberarReg(char * reg) {
 
     char * numero = &reg[2];				// tomo el dígito del registro: "$t7" -> 7
     int nuevoRegistro = atoi(numero);		
-	registrosOcupados[nuevoRegistro] = 0;	// libero el reg seleccionado
+	 if (nuevoRegistro >= 0 && nuevoRegistro < 10) 
+		registrosOcupados[nuevoRegistro] = 0;	// libero el reg seleccionado
 }
 
 void imprimirLC(ListaC codigo) {
+	printf("###################\n");
+	printf("# Seccion de codigo\n");
+	printf("\t.text\n");
+	printf("\t.globl main\n");
+	printf("main:\n");
 	PosicionListaC p = inicioLC(codigo);
 	while (p != finalLC(codigo)) {
 		Operacion oper = recuperaLC(codigo,p);
-		printf("%s",oper.op);
-		if (oper.res) printf(" %s",oper.res);
-		if (oper.arg1) printf(", %s",oper.arg1);
-		if (oper.arg2) printf(", %s",oper.arg2);
+		if(!strcmp(oper.op, "etiqueta"))
+			 printf("%s : \n", oper.res);
+		else {
+			printf("\t%s",oper.op);
+			if (oper.res) printf(" %s",oper.res);
+			if (oper.arg1) printf(", %s",oper.arg1);
+			if (oper.arg2) printf(", %s",oper.arg2);
+		}
 		printf("\n");
 		p = siguienteLC(codigo,p);
 	}
+	printf("\n");
+	printf("\t li $v0, 10\n");
+	printf("\tsyscall\n");
 }
 
 char *obtenerEtiqueta() {

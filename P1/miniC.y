@@ -12,15 +12,16 @@ int contadorEtiquetas = 1;
 extern char *yytext;
 extern int yylineno;
 extern int yylex();
+extern int errores;
 void imprimirTablaS();
 int perteneceTablaS(char * c);
 void insertaTablaIdentificador(char * c, Tipo t);
 int esConstante(char * c);
 void insertaTablaString(char * c, Tipo t, int contCadenas);
 void yyerror();
-void imprimeEnsamblador();
+void imprimeLS();
 char * registros[10] = {"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"};
-int registrosOcupados[10];
+int registrosOcupados[10] = {0};
 char * obtenerReg();
 char * concatena(char * a, char * b);
 void liberarReg(char * reg);
@@ -32,7 +33,6 @@ char * concatenaNumero (char * a, int num);
 
 %code requires {
 	#include "listaCodigo.h"
- 	typedef struct ListaCRep *ListaC;
 }
 
 %union{
@@ -40,7 +40,7 @@ char *lexema;
 ListaC codigo;
 }
 
-%type <codigo> expression statement statement_list print_item print_list read_list
+%type <codigo> expression statement statement_list print_item print_list read_list declarations const_list
 
 %token <lexema> STR ID NUM
 %token VAR CONST IF ELSE WHILE PRINT READ SEPARADOR COMA PLUSOP MINUSOP MULOP DIVOP ASIG LPAREN RPAREN LLLAVE RLLAVE INTERR DPUNTOS 
@@ -54,12 +54,15 @@ ListaC codigo;
 %expect 1
 %%
 
-program 		: 	{tablaSimb=creaLS();} ID LPAREN RPAREN LLLAVE declarations statement_list RLLAVE {imprimirTablaS(); imprimeEnsamblador();liberaLS(tablaSimb); }
+program 		: 	{tablaSimb=creaLS();} ID LPAREN RPAREN LLLAVE declarations statement_list RLLAVE {/*imprimirTablaS();*/ concatenaLC($6,$7); imprimeLS(); imprimirLC($6); liberaLS(tablaSimb); liberaLC($6); liberaLC($7);}
 				;
 
-declarations 	: 	declarations VAR tipo var_list SEPARADOR                      	
-       			| 	declarations CONST tipo const_list SEPARADOR                  
-    		    |   %empty                                                             	
+declarations 	: 	declarations VAR tipo var_list SEPARADOR                      	{$$ = $1;}
+       			| 	declarations CONST tipo const_list SEPARADOR                  	{$$ = $1;
+																					concatenaLC($$,$4);
+																					liberaLC($4);
+																					}
+    		    |   %empty                                                          {$$ = creaLC();} 	
 				;	
 tipo            : 	NUM                                                              
                 ;
@@ -68,12 +71,21 @@ var_list		:  	ID 																{if (!perteneceTablaS($1)) insertaTablaIdentifi
 				| 	var_list COMA ID 												{if (!perteneceTablaS($3)) insertaTablaIdentificador($3,VARIABLE); else printf("Error en linea %d : %s ya declarada \n",yylineno,$3);}
 				;
 		
-const_list 		: 	ID ASIG expression 												{if (!perteneceTablaS($1)) insertaTablaIdentificador($1,CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,$1);}
-				| 	const_list COMA ID ASIG expression 								{if (!perteneceTablaS($3)) insertaTablaIdentificador($3,CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,$3);}
+const_list 		: 	ID ASIG expression 												{if (!perteneceTablaS($1)) insertaTablaIdentificador($1,CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,$1);
+																					 $$ = creaLC();
+																					 liberaLC($3);
+																					}
+				| 	const_list COMA ID ASIG expression 								{if (!perteneceTablaS($3)) insertaTablaIdentificador($3,CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,$3);
+																					 $$ = creaLC();
+																					 liberaLC($5);
+																					}
 				;
 
-statement_list  :  	statement_list statement                                        {}
-                |   %empty                                                          {}   
+statement_list  :  	statement_list statement                                        {$$ = $1;
+																					 concatenaLC($$,$2);
+																					 liberaLC($2);
+																					}
+                |   %empty 															{$$ = creaLC();}                                                           
                 ;				
 
 statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n",yylineno,$1); 
@@ -85,22 +97,116 @@ statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)
 																					oper.arg1 = concatena("_",$1);
 																					oper.arg2 = NULL;
 																					insertaLC($$,finalLC($$),oper);
-																					guardaResLC($$,oper.res); 
+																					liberarReg(oper.res);
+																					//guardaResLC($$,oper.res); 
 
-																					imprimirLC($3);}
-                |  	LLLAVE statement_list RLLAVE                                   {}
-                |  	IF LPAREN expression RPAREN statement ELSE statement           {}
-                |  	IF LPAREN expression RPAREN statement                          {}
-                |  	WHILE LPAREN expression RPAREN statement                       {}
+																					/*imprimirLC($3);*/}
+                |  	LLLAVE statement_list RLLAVE                                   {$$ = $2;}
+                |  	IF LPAREN expression RPAREN statement ELSE statement           {$$ = $3;
+																					Operacion oper;
+																					oper.op = "beqz";
+																					oper.res = recuperaResLC($3);
+																					oper.arg1 = obtenerEtiqueta();
+																					oper.arg2 = NULL;
+																					insertaLC($$,finalLC($$),oper);
+																					concatenaLC($$,$5);
+																					liberaLC($5);
+																					
+																					Operacion operacion2;
+																					operacion2.op = "etiqueta";
+																					operacion2.res = oper.arg1;
+																					operacion2.arg1 = NULL;
+																					operacion2.arg2 = NULL;
+																					insertaLC($$,finalLC($$),operacion2);
+																					liberarReg(recuperaResLC($$));
+																						
+																					}
+                |  	IF LPAREN expression RPAREN statement                          {$$ = $3;
+																					Operacion oper;
+																					oper.op = "beqz";
+																					oper.res = recuperaResLC($3);
+																					oper.arg1 = obtenerEtiqueta();
+																					oper.arg2 = NULL;
+																					insertaLC($$,finalLC($$),oper);
+																					concatenaLC($$,$5);
+																					liberaLC($5);
+
+																					Operacion operacion2;
+																					operacion2.op = "etiqueta";
+																					operacion2.res = oper.arg1;
+																					operacion2.arg1 = NULL;
+																					operacion2.arg2 = NULL;
+																					insertaLC($$,finalLC($$),operacion2);
+																					liberarReg(recuperaResLC($$));
+																					}
+                |  	WHILE LPAREN expression RPAREN statement                       {$$ = creaLC();
+																					Operacion oper;
+																					oper.op = "etiqueta1";
+																					oper.res = obtenerEtiqueta();
+																					oper.arg1 = NULL;
+																					oper.arg2 = NULL;
+																					insertaLC($$,finalLC($$),oper);
+																					concatenaLC($$,$3);
+																				
+																					Operacion operacion2;
+																					operacion2.op = "beqz";
+																					operacion2.res = recuperaResLC($3);
+																					operacion2.arg1 = obtenerEtiqueta();
+																					operacion2.arg2 = NULL;
+																					insertaLC($$,finalLC($$),operacion2);
+																					liberarReg(recuperaResLC($3));
+																					concatenaLC($$,$5);
+																					liberaLC($5);
+																					
+																					Operacion operacion3;
+																					operacion3.op = "b";
+																					operacion3.res = oper.res;
+																					operacion3.arg1 = NULL;
+																					operacion3.arg2 = NULL;
+																					insertaLC($$,finalLC($$),operacion3);
+																																										
+																					Operacion operacion4;
+																					operacion4.op = "etiqueta2";
+																					operacion4.res = operacion2.arg1;
+																					operacion4.arg1 = NULL;
+																					operacion4.arg2 = NULL;
+																					insertaLC($$,finalLC($$),operacion3);
+																					
+																				   }
                 |  	PRINT LPAREN print_list RPAREN SEPARADOR                       {$$ = $3;}																				
-                | 	READ LPAREN read_list RPAREN SEPARADOR                         {}
+                | 	READ LPAREN read_list RPAREN SEPARADOR                         {$$ = $3;}
                 ;
 
 print_list      : 	print_item                                                     {$$ = $1;}
-                | 	print_list COMA print_item                                     {}
+                | 	print_list COMA print_item                                     {$$ = $1; concatenaLC($$,$3);}
                 ;
 
-print_item 		: 	expression														{ }
+print_item 		: 	expression													   {$$ = $1;
+																					 Operacion operacion1;
+																					 operacion1.op = "li";
+																					 operacion1.res = "$v0";
+																					 operacion1.arg1 = "1";
+																					 operacion1.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),operacion1);
+																					 //guardaResLC($$,operacion1.res); 
+																					 
+																					 Operacion operacion2;
+																					 operacion2.op = "move";
+																					 operacion2.res = "$a0";
+																					 operacion2.arg1 = recuperaResLC($1);
+																					 operacion2.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),operacion2);
+																					 //guardaResLC($$,operacion2.res); 
+
+																					 Operacion syscall;			
+																					 syscall.op = "syscall";
+																					 syscall.res = NULL;
+																					 syscall.arg1 = NULL;
+																					 syscall.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),syscall);
+																					 //guardaResLC($$,syscall.res); 
+																					 liberarReg(recuperaResLC($1));
+																					}
 				|   STR 															{insertaTablaString($1,CADENA,contCadenas++);
 																					 $$ = creaLC();
 																					 Operacion operacion1;
@@ -109,7 +215,7 @@ print_item 		: 	expression														{ }
 																					 operacion1.arg1 = "4";
 																					 operacion1.arg2 = NULL;
 																					 insertaLC($$,finalLC($$),operacion1);
-																					 guardaResLC($$,operacion1.res); 
+																					 //guardaResLC($$,operacion1.res); 
 																					 
 																					 Operacion operacion2;
 																					 operacion2.op = "la";
@@ -117,22 +223,74 @@ print_item 		: 	expression														{ }
 																					 operacion2.arg1 = concatenaNumero("$str", contCadenas);
 																					 operacion2.arg2 = NULL;
 																					 insertaLC($$,finalLC($$),operacion2);
-																					 guardaResLC($$,operacion2.res); 
+																					 //guardaResLC($$,operacion2.res); 
 
 																					 Operacion syscall;			
-																					 operacion2.op = "syscall";
-																					 operacion2.res = NULL;
-																					 operacion2.arg1 = NULL;
-																					 operacion2.arg2 = NULL;
+																					 syscall.op = "syscall";
+																					 syscall.res = NULL;
+																					 syscall.arg1 = NULL;
+																					 syscall.arg2 = NULL;
 																					 insertaLC($$,finalLC($$),syscall);
-																					 guardaResLC($$,syscall.res); 
+																					 //guardaResLC($$,syscall.res); 
 																					}
 				;
 
 read_list   	: 	ID 															    {if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n", yylineno,$1);
-																					else if (esConstante($1)) printf("Error en linea %d : %s es constante\n", yylineno, $1);}
+																					else if (esConstante($1)) printf("Error en linea %d : %s es constante\n", yylineno, $1);
+																					 $$ = creaLC();
+																					 Operacion operacion1;
+																					 operacion1.op = "li";
+																					 operacion1.res = "$v0";
+																					 operacion1.arg1 = "5";
+																					 operacion1.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),operacion1);
+																					 //guardaResLC($$,operacion1.res); 
+																					 
+																					 Operacion syscall;			
+																					 syscall.op = "syscall";
+																					 syscall.res = NULL;
+																					 syscall.arg1 = NULL;
+																					 syscall.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),syscall);
+																					 //guardaResLC($$,syscall.res); 
+																					 
+																					 Operacion operacion2;
+																					 operacion2.op = "sw";
+																					 operacion2.res = "$v0";
+																					 operacion2.arg1 = concatena("_", $1);
+																					 operacion2.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),operacion2);
+																					 //guardaResLC($$,operacion2.res); 
+
+																					 
+																					}
 				| 	read_list COMA ID 												{if (!perteneceTablaS($3)) printf("Error en linea %d : %s no declarada \n", yylineno, $3);
-																					else if (esConstante($3)) printf("Error en linea %d : %s es constante\n", yylineno, $3);}
+																					else if (esConstante($3)) printf("Error en linea %d : %s es constante\n", yylineno, $3);
+																					 $$ = $1;
+																					 Operacion operacion1;
+																					 operacion1.op = "li";
+																					 operacion1.res = "$v0";
+																					 operacion1.arg1 = "5";
+																					 operacion1.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),operacion1);
+																					 //guardaResLC($$,operacion1.res); 
+																					 
+																					 Operacion syscall;			
+																					 syscall.op = "syscall";
+																					 syscall.res = NULL;
+																					 syscall.arg1 = NULL;
+																					 syscall.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),syscall);
+																					 //guardaResLC($$,syscall.res); 
+																					 
+																					 Operacion operacion2;
+																					 operacion2.op = "sw";
+																					 operacion2.res = "$v0";
+																					 operacion2.arg1 = concatena("_", $3);
+																					 operacion2.arg2 = NULL;
+																					 insertaLC($$,finalLC($$),operacion2);
+																					 //guardaResLC($$,operacion2.res); 
+																					}
 				;
 
 expression		: 	expression PLUSOP expression              						{ $$ = $1; concatenaLC($$,$3);
@@ -265,7 +423,7 @@ void insertaTablaString(char * c, Tipo t, int contCadenas) {
 	insertaLS(tablaSimb, finalLS(tablaSimb), aux);
 }
 
-void imprimeEnsamblador(){
+void imprimeLS(){	// .data del programa
 	printf("##################\n");
 	printf("# Seccion de datos\n");
 	printf("\t.data\n\n");
@@ -274,7 +432,7 @@ void imprimeEnsamblador(){
 	while(p!=finalLS(tablaSimb)){
 		Simbolo aux = recuperaLS(tablaSimb,p);
 		if(aux.tipo == CADENA){
-			printf("srt%d: \n\t.asciiz %s \n",aux.valor,aux.nombre);
+			printf("str%d: \n\t.asciiz %s \n",aux.valor,aux.nombre);
 		}
 		p = siguienteLS(tablaSimb,p);
 	}
@@ -307,10 +465,13 @@ char * obtenerReg(){
 }
 
 char * concatena(char * a, char * b){
-	int tamanoBuffer = strlen(a) + strlen(b) + 1; //malloc(sizeof(char)*34); //32 del tamaño del ID + "/0" + "_"
+	/*int tamanoBuffer = strlen(a) + strlen(b) + 1; //malloc(sizeof(char)*34); //32 del tamaño del ID + "/0" + "_"
 	char * buffer = malloc(tamanoBuffer * sizeof(char));
 	sprintf(buffer, "%s%s", a, b);
-	return buffer;
+	return buffer;*/
+	char buffer[40];
+	sprintf(buffer, "%s%s", a, b);
+	return strdup(buffer);
 }
 
 char * concatenaNumero (char * a, int num){
@@ -324,20 +485,33 @@ void liberarReg(char * reg) {
 
     char * numero = &reg[2];				// tomo el dígito del registro: "$t7" -> 7
     int nuevoRegistro = atoi(numero);		
-	registrosOcupados[nuevoRegistro] = 0;	// libero el reg seleccionado
+	 if (nuevoRegistro >= 0 && nuevoRegistro < 10) 
+		registrosOcupados[nuevoRegistro] = 0;	// libero el reg seleccionado
 }
 
 void imprimirLC(ListaC codigo) {
+	printf("###################\n");
+	printf("# Seccion de codigo\n");
+	printf("\t.text\n");
+	printf("\t.globl main\n");
+	printf("main:\n");
 	PosicionListaC p = inicioLC(codigo);
 	while (p != finalLC(codigo)) {
 		Operacion oper = recuperaLC(codigo,p);
-		printf("%s",oper.op);
-		if (oper.res) printf(" %s",oper.res);
-		if (oper.arg1) printf(", %s",oper.arg1);
-		if (oper.arg2) printf(", %s",oper.arg2);
+		if(!strcmp(oper.op, "etiqueta"))
+			 printf("%s : \n", oper.res);
+		else {
+			printf("\t%s",oper.op);
+			if (oper.res) printf(" %s",oper.res);
+			if (oper.arg1) printf(", %s",oper.arg1);
+			if (oper.arg2) printf(", %s",oper.arg2);
+		}
 		printf("\n");
 		p = siguienteLC(codigo,p);
 	}
+	printf("\n");
+	printf("\t li $v0, 10\n");
+	printf("\tsyscall\n");
 }
 
 char *obtenerEtiqueta() {
