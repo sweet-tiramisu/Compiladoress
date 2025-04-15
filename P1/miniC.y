@@ -330,28 +330,28 @@ read_list   	: 	ID 															    {if (!perteneceTablaS($1)) printf("Error e
 				;
 
 expression		: 	expression PLUSOP expression              						{ $$ = $1; concatenaLC($$,$3);
-																					  Operacion oper; oper.op = "add"; oper.res = recuperaResLC($1);
+																					  Operacion oper; oper.op = "add"; oper.res = obtenerReg();
 																					  oper.arg1 = recuperaResLC($1); oper.arg2 = recuperaResLC($3);
 																					  insertaLC($$,finalLC($$),oper); guardaResLC($$,oper.res); 
-																					  liberarReg(oper.arg2); liberaLC($3);
+																					  liberarReg(oper.arg1); liberarReg(oper.arg2); liberaLC($3);
 																					}                    
                 | 	expression MINUSOP expression                 					{ $$ = $1; concatenaLC($$,$3);
-																					  Operacion oper; oper.op = "sub"; oper.res = recuperaResLC($1);
+																					  Operacion oper; oper.op = "sub"; oper.res = obtenerReg();
 																					  oper.arg1 = recuperaResLC($1); oper.arg2 = recuperaResLC($3);
 																					  insertaLC($$,finalLC($$),oper); guardaResLC($$,oper.res); 
-																					  liberarReg(oper.arg2); liberaLC($3);
+																					  liberarReg(oper.arg1); liberarReg(oper.arg2); liberaLC($3);
 																					}                  
                 | 	expression MULOP expression                     				{ $$ = $1; concatenaLC($$,$3);
-																					  Operacion oper; oper.op = "mul"; oper.res = recuperaResLC($1);
+																					  Operacion oper; oper.op = "mul"; oper.res = obtenerReg();
 																					  oper.arg1 = recuperaResLC($1); oper.arg2 = recuperaResLC($3);
 																					  insertaLC($$,finalLC($$),oper); guardaResLC($$,oper.res); 
-																					  liberarReg(oper.arg2); liberaLC($3);
+																					  liberarReg(oper.arg1); liberarReg(oper.arg2); liberaLC($3);
 																					}                
                 |	expression DIVOP expression                                     { $$ = $1; concatenaLC($$,$3);
-																					  Operacion oper; oper.op = "div"; oper.res = recuperaResLC($1);
+																					  Operacion oper; oper.op = "div"; oper.res = obtenerReg();
 																					  oper.arg1 = recuperaResLC($1); oper.arg2 = recuperaResLC($3);
 																					  insertaLC($$,finalLC($$),oper); guardaResLC($$,oper.res); 
-																					  liberarReg(oper.arg2); liberaLC($3);
+																					  liberarReg(oper.arg1); liberarReg(oper.arg2); liberaLC($3);
 																					}
                 | 	LPAREN expression INTERR expression DPUNTOS expression RPAREN   {}
                 | 	MINUSOP expression %prec UMINUS                                 {$$ = $2;
@@ -544,10 +544,12 @@ void imprimirLC(ListaC codigo) {
 		
 		p = siguienteLC(codigo,p);
 	}
+	printf("\n");
 	printf("##############\n");
 	printf("# Fin\n");
 	printf("\tli $v0, 10\n");
 	printf("\tsyscall\n");
+	
 }
 
 char *obtenerEtiqueta() {

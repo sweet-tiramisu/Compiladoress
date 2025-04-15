@@ -1553,10 +1553,10 @@ yyreduce:
   case 27: /* expression: expression PLUSOP expression  */
 #line 332 "miniC.y"
                                                                                                                         { (yyval.codigo) = (yyvsp[-2].codigo); concatenaLC((yyval.codigo),(yyvsp[0].codigo));
-																					  Operacion oper; oper.op = "add"; oper.res = recuperaResLC((yyvsp[-2].codigo));
+																					  Operacion oper; oper.op = "add"; oper.res = obtenerReg();
 																					  oper.arg1 = recuperaResLC((yyvsp[-2].codigo)); oper.arg2 = recuperaResLC((yyvsp[0].codigo));
 																					  insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper); guardaResLC((yyval.codigo),oper.res); 
-																					  liberarReg(oper.arg2); liberaLC((yyvsp[0].codigo));
+																					  liberarReg(oper.arg1); liberarReg(oper.arg2); liberaLC((yyvsp[0].codigo));
 																					}
 #line 1562 "miniC.tab.c"
     break;
@@ -1564,10 +1564,10 @@ yyreduce:
   case 28: /* expression: expression MINUSOP expression  */
 #line 338 "miniC.y"
                                                                                                         { (yyval.codigo) = (yyvsp[-2].codigo); concatenaLC((yyval.codigo),(yyvsp[0].codigo));
-																					  Operacion oper; oper.op = "sub"; oper.res = recuperaResLC((yyvsp[-2].codigo));
+																					  Operacion oper; oper.op = "sub"; oper.res = obtenerReg();
 																					  oper.arg1 = recuperaResLC((yyvsp[-2].codigo)); oper.arg2 = recuperaResLC((yyvsp[0].codigo));
 																					  insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper); guardaResLC((yyval.codigo),oper.res); 
-																					  liberarReg(oper.arg2); liberaLC((yyvsp[0].codigo));
+																					  liberarReg(oper.arg1); liberarReg(oper.arg2); liberaLC((yyvsp[0].codigo));
 																					}
 #line 1573 "miniC.tab.c"
     break;
@@ -1575,10 +1575,10 @@ yyreduce:
   case 29: /* expression: expression MULOP expression  */
 #line 344 "miniC.y"
                                                                                                         { (yyval.codigo) = (yyvsp[-2].codigo); concatenaLC((yyval.codigo),(yyvsp[0].codigo));
-																					  Operacion oper; oper.op = "mul"; oper.res = recuperaResLC((yyvsp[-2].codigo));
+																					  Operacion oper; oper.op = "mul"; oper.res = obtenerReg();
 																					  oper.arg1 = recuperaResLC((yyvsp[-2].codigo)); oper.arg2 = recuperaResLC((yyvsp[0].codigo));
 																					  insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper); guardaResLC((yyval.codigo),oper.res); 
-																					  liberarReg(oper.arg2); liberaLC((yyvsp[0].codigo));
+																					  liberarReg(oper.arg1); liberarReg(oper.arg2); liberaLC((yyvsp[0].codigo));
 																					}
 #line 1584 "miniC.tab.c"
     break;
@@ -1586,10 +1586,10 @@ yyreduce:
   case 30: /* expression: expression DIVOP expression  */
 #line 350 "miniC.y"
                                                                                         { (yyval.codigo) = (yyvsp[-2].codigo); concatenaLC((yyval.codigo),(yyvsp[0].codigo));
-																					  Operacion oper; oper.op = "div"; oper.res = recuperaResLC((yyvsp[-2].codigo));
+																					  Operacion oper; oper.op = "div"; oper.res = obtenerReg();
 																					  oper.arg1 = recuperaResLC((yyvsp[-2].codigo)); oper.arg2 = recuperaResLC((yyvsp[0].codigo));
 																					  insertaLC((yyval.codigo),finalLC((yyval.codigo)),oper); guardaResLC((yyval.codigo),oper.res); 
-																					  liberarReg(oper.arg2); liberaLC((yyvsp[0].codigo));
+																					  liberarReg(oper.arg1); liberarReg(oper.arg2); liberaLC((yyvsp[0].codigo));
 																					}
 #line 1595 "miniC.tab.c"
     break;
@@ -2003,10 +2003,12 @@ void imprimirLC(ListaC codigo) {
 		
 		p = siguienteLC(codigo,p);
 	}
+	printf("\n");
 	printf("##############\n");
 	printf("# Fin\n");
 	printf("\tli $v0, 10\n");
 	printf("\tsyscall\n");
+	
 }
 
 char *obtenerEtiqueta() {
