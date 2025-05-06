@@ -50,6 +50,12 @@ read                                        return READ;
 "}"                                         return RLLAVE;
 "?"                                         return INTERR;
 ":"                                         return DPUNTOS;
+"<"                                         return MENOR;
+">"                                         return MAYOR;
+">="                                        return MAYORIGUAL;
+"<="                                        return MENORIGUAL;
+"=="                                        return IGUALIGUAL;
+"!="                                        return NOIGUAL;
 
 [^\n\t]                                     error_lexico();
 

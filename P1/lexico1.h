@@ -21,4 +21,10 @@
 #define             RLLAVE					23
 #define             INTERR					24
 #define             DPUNTOS					25
-#define		    ERROR_TOKEN				-2
+#define		    MAYOR					26
+#define		    MENOR					27
+#define		    MENORIGUAL					28
+#define		    MAYORIGUAL					29
+#define		    IGUALIGUAL					30
+#define		    NOIGUAL					31
+#define		    ERROR_TOKEN					-2

@@ -20,7 +20,7 @@ int esConstante(char * c);
 void insertaTablaString(char * c, Tipo t, int contCadenas);
 void yyerror();
 void imprimeLS();
-char * registros[10] = {"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"};
+char * registros[10] = {"$t0","$t1","$t2","$t3","$t4","$t5","$t6","$t7","$t8","$t9"};
 int registrosOcupados[10] = {0};
 char * obtenerReg();
 char * concatena(char * a, char * b);
@@ -43,7 +43,7 @@ ListaC codigo;
 %type <codigo> expression statement statement_list print_item print_list read_list declarations const_list
 
 %token <lexema> STR ID NUM
-%token VAR CONST IF ELSE WHILE PRINT READ SEPARADOR COMA PLUSOP MINUSOP MULOP DIVOP ASIG LPAREN RPAREN LLLAVE RLLAVE INTERR DPUNTOS 
+%token VAR CONST IF ELSE WHILE PRINT READ SEPARADOR COMA PLUSOP MINUSOP MULOP DIVOP ASIG LPAREN RPAREN LLLAVE RLLAVE INTERR DPUNTOS MENOR MAYOR MAYORIGUAL MENORIGUAL IGUALIGUAL NOIGUAL
 
 %right ASIG
 %left PLUSOP MINUSOP
@@ -209,6 +209,27 @@ statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)
 																					liberarReg(recuperaResLC($3));
 																					
 																				   }
+				|	DO statement WHILE LPAREN expression RPAREN					   {$$ = creaLC();
+																					Operacion oper;
+																					oper.op = "etiqueta";
+																					oper.res = obtenerEtiqueta();
+																					oper.arg1 = NULL;
+																					oper.arg2 = NULL;
+																					insertaLC($$,finalLC($$),oper);
+
+																					concatenaLC($$,$2);
+																					concatena($$,$5);
+
+																					Operacion operaacion2;
+																					operaacion2.op = "bnez";
+																					operacion2.res = recuperaResLC($5);
+																					operacion2.arg1 = oper.res;
+																					operacion2.arg2 = NULL;
+																					insertaLC($$,finalLC($$),operacion2);
+																					liberaLC($2); liberaLC($5);
+																					liberarReg(recuperaResLC($5));
+																					// ¿ESTO SERÍA $5 Ó $2?
+																					}
                 |  	PRINT LPAREN print_list RPAREN SEPARADOR                       {$$ = $3;}																				
                 | 	READ LPAREN read_list RPAREN SEPARADOR                         {$$ = $3;}
                 ;
@@ -353,7 +374,10 @@ expression		: 	expression PLUSOP expression              						{ $$ = $1; concat
 																					  insertaLC($$,finalLC($$),oper); guardaResLC($$,oper.res); 
 																					  liberarReg(oper.arg1); liberarReg(oper.arg2); liberaLC($3);
 																					}
-                | 	LPAREN expression INTERR expression DPUNTOS expression RPAREN   {}
+                | 	LPAREN expression INTERR expression DPUNTOS expression RPAREN   { $$=$2;
+																					  Operacion oper
+
+																					}
                 | 	MINUSOP expression %prec UMINUS                                 {$$ = $2;
 																					 Operacion oper;
 																					 oper.op = "neg";
@@ -362,16 +386,21 @@ expression		: 	expression PLUSOP expression              						{ $$ = $1; concat
 																					 oper.arg2 = NULL;
 																					 insertaLC($$,finalLC($$),oper);
 																					 guardaResLC($$,oper.res);}          
-                | 	LPAREN expression RPAREN                                        {$$ = $2;}																					
-				| 	ID 																{if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n", yylineno, $1); 
-																																								$$ = creaLC();
-																																								Operacion oper;
-																																								oper.op = "lw";
-																																								oper.res = obtenerReg();
-																																								oper.arg1 = concatena("_",$1);
-																																								oper.arg2 = NULL;
-																																								insertaLC($$,finalLC($$),oper);
-																																								guardaResLC($$,oper.res); }
+                | 	LPAREN expression RPAREN                                        {$$ = $2;}
+				|	expression MENOR expression										{$$ = $1;
+																					 
+																					}																					
+				| 	ID 																{ if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n", 
+																					  yylineno, $1); 
+																					  $$ = creaLC();
+																					  Operacion oper;
+																					  oper.op = "lw";
+																					  oper.res = obtenerReg();
+																					  oper.arg1 = concatena("_",$1);
+																					  oper.arg2 = NULL;
+																					  insertaLC($$,finalLC($$),oper);
+																					  guardaResLC($$,oper.res); 
+																					}
 				| 	NUM             												{$$ = creaLC();
 																					 Operacion oper;
 																					 oper.op = "li";
