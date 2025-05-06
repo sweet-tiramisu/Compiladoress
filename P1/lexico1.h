@@ -27,4 +27,6 @@
 #define		    MAYORIGUAL					29
 #define		    IGUALIGUAL					30
 #define		    NOIGUAL					31
+#define		    DO						32
+#define		    FOR						33
 #define		    ERROR_TOKEN					-2

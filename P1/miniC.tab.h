@@ -68,22 +68,30 @@ extern int yydebug;
     IF = 263,                      /* IF  */
     ELSE = 264,                    /* ELSE  */
     WHILE = 265,                   /* WHILE  */
-    PRINT = 266,                   /* PRINT  */
-    READ = 267,                    /* READ  */
-    SEPARADOR = 268,               /* SEPARADOR  */
-    COMA = 269,                    /* COMA  */
-    PLUSOP = 270,                  /* PLUSOP  */
-    MINUSOP = 271,                 /* MINUSOP  */
-    MULOP = 272,                   /* MULOP  */
-    DIVOP = 273,                   /* DIVOP  */
-    ASIG = 274,                    /* ASIG  */
-    LPAREN = 275,                  /* LPAREN  */
-    RPAREN = 276,                  /* RPAREN  */
-    LLLAVE = 277,                  /* LLLAVE  */
-    RLLAVE = 278,                  /* RLLAVE  */
-    INTERR = 279,                  /* INTERR  */
-    DPUNTOS = 280,                 /* DPUNTOS  */
-    UMINUS = 281                   /* UMINUS  */
+    DO = 266,                      /* DO  */
+    FOR = 267,                     /* FOR  */
+    PRINT = 268,                   /* PRINT  */
+    READ = 269,                    /* READ  */
+    SEPARADOR = 270,               /* SEPARADOR  */
+    COMA = 271,                    /* COMA  */
+    PLUSOP = 272,                  /* PLUSOP  */
+    MINUSOP = 273,                 /* MINUSOP  */
+    MULOP = 274,                   /* MULOP  */
+    DIVOP = 275,                   /* DIVOP  */
+    ASIG = 276,                    /* ASIG  */
+    LPAREN = 277,                  /* LPAREN  */
+    RPAREN = 278,                  /* RPAREN  */
+    LLLAVE = 279,                  /* LLLAVE  */
+    RLLAVE = 280,                  /* RLLAVE  */
+    INTERR = 281,                  /* INTERR  */
+    DPUNTOS = 282,                 /* DPUNTOS  */
+    MENOR = 283,                   /* MENOR  */
+    MAYOR = 284,                   /* MAYOR  */
+    MAYORIGUAL = 285,              /* MAYORIGUAL  */
+    MENORIGUAL = 286,              /* MENORIGUAL  */
+    IGUALIGUAL = 287,              /* IGUALIGUAL  */
+    NOIGUAL = 288,                 /* NOIGUAL  */
+    UMINUS = 289                   /* UMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -97,7 +105,7 @@ union YYSTYPE
 char *lexema;
 ListaC codigo;
 
-#line 101 "miniC.tab.h"
+#line 109 "miniC.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

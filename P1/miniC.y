@@ -43,12 +43,14 @@ ListaC codigo;
 %type <codigo> expression statement statement_list print_item print_list read_list declarations const_list
 
 %token <lexema> STR ID NUM
-%token VAR CONST IF ELSE WHILE PRINT READ SEPARADOR COMA PLUSOP MINUSOP MULOP DIVOP ASIG LPAREN RPAREN LLLAVE RLLAVE INTERR DPUNTOS MENOR MAYOR MAYORIGUAL MENORIGUAL IGUALIGUAL NOIGUAL
+%token VAR CONST IF ELSE WHILE DO FOR PRINT READ SEPARADOR COMA PLUSOP MINUSOP MULOP DIVOP ASIG LPAREN RPAREN LLLAVE RLLAVE INTERR DPUNTOS MENOR MAYOR MAYORIGUAL MENORIGUAL IGUALIGUAL NOIGUAL
 
 %right ASIG
+%left INTERR DPUNTOS
+%left IGUALIGUAL NOIGUAL
+%left MENOR MAYOR MENORIGUAL MAYORIGUAL
 %left PLUSOP MINUSOP
 %left MULOP DIVOP
-%left INTERR DPUNTOS
 %left UMINUS
 
 %expect 1
@@ -90,6 +92,7 @@ const_list 		: 	ID ASIG expression 												{if (!perteneceTablaS($1)) insert
 																					 oper.arg1 = concatena("_",$3);
 																					 oper.arg2 = NULL;
 																					 insertaLC($$,finalLC($$),oper);
+																					 concatenaLC($5,$1);
 																					 liberarReg(oper.res);
 																					}
 				;
@@ -139,7 +142,7 @@ statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)
 																					operacion3.arg1 = NULL;
 																					operacion3.arg2 = NULL;
 																					insertaLC($$,finalLC($$),operacion3);
-																					liberarReg(recuperaResLC($$));
+																					//liberarReg(recuperaResLC($$));
 																					concatenaLC($$,$7);
 																					liberaLC($7);
 
@@ -149,9 +152,7 @@ statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)
 																					operacion4.arg1 = NULL;
 																					operacion4.arg2 = NULL;
 																					insertaLC($$,finalLC($$),operacion4);
-																					liberarReg(recuperaResLC($3));
-
-																						
+																					liberarReg(recuperaResLC($3));																						
 																					}
                 |  	IF LPAREN expression RPAREN statement                          {$$ = $3;
 																					Operacion oper;
@@ -209,7 +210,7 @@ statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)
 																					liberarReg(recuperaResLC($3));
 																					
 																				   }
-				|	DO statement WHILE LPAREN expression RPAREN					   {$$ = creaLC();
+				|	DO statement WHILE LPAREN expression RPAREN SEPARADOR		   {$$ = creaLC();
 																					Operacion oper;
 																					oper.op = "etiqueta";
 																					oper.res = obtenerEtiqueta();
@@ -218,18 +219,91 @@ statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)
 																					insertaLC($$,finalLC($$),oper);
 
 																					concatenaLC($$,$2);
-																					concatena($$,$5);
+																					concatenaLC($$,$5);
 
-																					Operacion operaacion2;
-																					operaacion2.op = "bnez";
+																					Operacion operacion2;
+																					operacion2.op = "bnez";
 																					operacion2.res = recuperaResLC($5);
 																					operacion2.arg1 = oper.res;
 																					operacion2.arg2 = NULL;
 																					insertaLC($$,finalLC($$),operacion2);
+																					
 																					liberaLC($2); liberaLC($5);
-																					liberarReg(recuperaResLC($5));
-																					// ¿ESTO SERÍA $5 Ó $2?
+																					liberarReg(operacion2.res);
 																					}
+				|	FOR LPAREN ID ASIG expression DPUNTOS expression RPAREN statement	{
+																					if(!perteneceTablaS($3)){printf("Error en linea %d : %s no declarada \n",yylineno,$3);} // ¿quitar el %s y poner variable?
+																					else if (esConstante($3)) printf("Error en linea %d : %s es constante, no se puede modificar\n", yylineno, $3);
+																					
+																					// 1. inicio = $5
+																					$$ = $5;
+																					Operacion oper;
+																					oper.op = "sw";
+																					oper.res = recuperaResLC($5);
+																					oper.arg1 = concatena("_",$3);
+																					oper.arg2 = NULL;
+																					insertaLC($$,finalLC($$),oper);
+																					liberarReg(oper.res);
+
+																					char * empiezaBucle = obtenerEtiqueta();
+																					char * finalizaBucle = obtenerEtiqueta();
+
+																					Operacion empezar;
+																					empezar.op = "etiqueta";
+																					empezar.res = empiezaBucle;
+																					empezar.arg1 = NULL;
+																					empezar.arg2 = NULL;
+																					insertaLC($$, finalLC($$), empezar);
+
+																					Operacion carga;
+																					carga.op = "lw";
+																					carga.res = obtenerReg();
+																					carga.arg1 = concatena("_",$3);
+																					carga.arg2 = NULL;
+																					insertaLC($$,finalLC($$),carga);
+																					concatenaLC($$,$7);
+
+																					// Para saber si se ha llegado al final
+																					Operacion comprobacion;
+																					comprobacion.op = "bgt";
+																					comprobacion.res = carga.res;
+																					comprobacion.arg1 = recuperaResLC($7);
+																					comprobacion.arg2 = finalizaBucle;
+																					insertaLC($$,finalLC($$),comprobacion);
+																					concatenaLC($$,$9);
+
+																					Operacion incrementar;
+																					incrementar.op = "addi";
+																					incrementar.res = carga.res;
+																					incrementar.arg1 = carga.res;
+																					incrementar.arg2 = "1";
+																					insertaLC($$, finalLC($$), incrementar);
+
+																					Operacion almacenar;
+																					almacenar.op = "sw";
+																					almacenar.res = incrementar.res;
+																					almacenar.arg1 = concatena("_",$3);
+																					almacenar.arg2 = NULL;
+																					insertaLC($$, finalLC($$), almacenar);
+
+																					Operacion salto;
+																					salto.op = "j";
+																					salto.res = empiezaBucle;
+																					salto.arg1 = NULL;
+																					salto.arg2 = NULL;
+																					insertaLC($$,finalLC($$),salto);
+
+																					Operacion terminar;
+																					terminar.op = "etiqueta";
+																					terminar.res = finalizaBucle;
+																					terminar.arg1 = NULL;
+																					terminar.arg2 = NULL;
+																					insertaLC($$,finalLC($$), terminar);
+																					liberarReg(carga.res);
+																					liberarReg(recuperaResLC($7));
+
+																					}
+					 																	
                 |  	PRINT LPAREN print_list RPAREN SEPARADOR                       {$$ = $3;}																				
                 | 	READ LPAREN read_list RPAREN SEPARADOR                         {$$ = $3;}
                 ;
@@ -238,7 +312,7 @@ print_list      : 	print_item                                                   
                 | 	print_list COMA print_item                                     {$$ = $1; concatenaLC($$,$3);}
                 ;
 
-print_item 		: 	expression													   {$$ = $1;
+print_item 		: 	expression													   { $$ = $1;
 																					 Operacion oper;
 																					 oper.op = "move";
 																					 oper.res = "$a0";
@@ -375,7 +449,7 @@ expression		: 	expression PLUSOP expression              						{ $$ = $1; concat
 																					  liberarReg(oper.arg1); liberarReg(oper.arg2); liberaLC($3);
 																					}
                 | 	LPAREN expression INTERR expression DPUNTOS expression RPAREN   { $$=$2;
-																					  Operacion oper
+																					  Operacion oper;
 
 																					}
                 | 	MINUSOP expression %prec UMINUS                                 {$$ = $2;
@@ -385,11 +459,111 @@ expression		: 	expression PLUSOP expression              						{ $$ = $1; concat
 																					 oper.arg1 = recuperaResLC($2);
 																					 oper.arg2 = NULL;
 																					 insertaLC($$,finalLC($$),oper);
-																					 guardaResLC($$,oper.res);}          
+																					 guardaResLC($$,oper.res);
+																					}          
                 | 	LPAREN expression RPAREN                                        {$$ = $2;}
-				|	expression MENOR expression										{$$ = $1;
-																					 
-																					}																					
+				|	expression MENOR expression										{ $$ = $1;
+																					  Operacion menor;
+																					  menor.op = "slt";
+																					  menor.res = recuperaResLC($1);
+																					  menor.arg1 = menor.res;
+																					  menor.arg2 = recuperaResLC($3);
+
+																					  concatenaLC($$,$3);
+																					  insertaLC($$,finalLC($$),menor);
+																					  liberarReg(recuperaResLC($3));
+																					  liberaLC($3);
+																					} 
+				|	expression MAYOR expression										{ $$ = $1;
+																					  Operacion mayor;
+																					  mayor.op = "slt";
+																					  mayor.res = recuperaResLC($3);
+																					  mayor.arg1 = mayor.res;
+																					  mayor.arg2 = recuperaResLC($1);
+																					  liberarReg(recuperaResLC($1));
+																					  concatenaLC($$,$3);
+																					  insertaLC($$,finalLC($$),mayor);
+																					  guardaResLC($$,recuperaResLC($3));
+																					  liberaLC($3);
+																					}
+				|	expression MENORIGUAL expression								{ $$ = $1;			// Si se tiene a > b -> ¬(a > b) = a <= b
+																					  Operacion mayor;
+																					  mayor.op = "slt";
+																					  mayor.res = recuperaResLC($3);
+																					  mayor.arg1 = mayor.res;
+																					  mayor.arg2 = recuperaResLC($1);
+
+																					  Operacion negado;
+																					  negado.op = "xori";
+																					  negado.res = mayor.res;
+																					  negado.arg1 = mayor.res;
+																					  negado.arg2 = "1";
+																					  concatenaLC($$,$3);
+
+																					  insertaLC($$,finalLC($$),mayor);
+																					  insertaLC($$,finalLC($$),negado);
+																					  guardaResLC($$,recuperaResLC($3));
+																					  liberaLC($3);																					  
+																					}	
+			|	expression MAYORIGUAL expression									{ $$ = $1;			// Si se tiene a < b -> ¬(a < b) = a >= b
+																					  Operacion menor;
+																					  menor.op = "slt";
+																					  menor.res = recuperaResLC($1);
+																					  menor.arg1 = menor.res;
+																					  menor.arg2 = recuperaResLC($3);
+
+																					  Operacion negado;
+																					  negado.op = "xori";
+																					  negado.res = menor.res;
+																					  negado.arg1 = menor.res;
+																					  negado.arg2 = "1";
+																					  concatenaLC($$,$3);
+
+																					  insertaLC($$,finalLC($$),menor);
+																					  insertaLC($$,finalLC($$),negado);
+																					  //guardaResLC($$,recuperaResLC($3));
+																					  liberarReg(recuperaResLC($3));
+																					  liberaLC($3);	
+																					}
+			|	expression IGUALIGUAL expression									{ $$ = $1;
+																					  Operacion xor;
+																					  xor.op = "xor";
+																					  xor.res = obtenerReg();
+																					  xor.arg1 = recuperaResLC($1);
+																					  xor.arg2 = recuperaResLC($3);
+																					  
+																					  Operacion igual;
+																					  igual.op = "sltiu";
+																					  igual.res = xor.res;
+																					  igual.arg1 = xor.res;
+																					  igual.arg2 = "1";
+
+																					  concatenaLC($$,$3);
+																					  insertaLC($$,finalLC($$),xor);
+																					  insertaLC($$,finalLC($$),igual);
+																					  liberarReg(recuperaResLC($3));
+																					  liberaLC($3);
+																					}
+			|	expression NOIGUAL expression										{ $$ = $1;
+																					  Operacion xor;
+																					  xor.op = "xor";
+																					  xor.res = obtenerReg();
+																					  xor.arg1 = recuperaResLC($1);
+																					  xor.arg2 = recuperaResLC($3);
+																					  
+																					  Operacion distinto;
+																					  distinto.op = "sltu";
+																					  distinto.res = xor.res;
+																					  distinto.arg1 = xor.res;
+																					  distinto.arg2 = "0";
+
+																					  concatenaLC($$,$3);
+																					  insertaLC($$,finalLC($$),xor);
+																					  insertaLC($$,finalLC($$),distinto);
+																					  liberarReg(recuperaResLC($3));
+																					  liberaLC($3);
+																					}																						
+																																				
 				| 	ID 																{ if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n", 
 																					  yylineno, $1); 
 																					  $$ = creaLC();
@@ -401,14 +575,15 @@ expression		: 	expression PLUSOP expression              						{ $$ = $1; concat
 																					  insertaLC($$,finalLC($$),oper);
 																					  guardaResLC($$,oper.res); 
 																					}
-				| 	NUM             												{$$ = creaLC();
-																					 Operacion oper;
-																					 oper.op = "li";
-																					 oper.res = obtenerReg();
-																					 oper.arg1 = $1;
-																					 oper.arg2 = NULL;
-																					 insertaLC($$,finalLC($$),oper);
-																					 guardaResLC($$,oper.res);}                                        
+				| 	NUM             												{ $$ = creaLC();
+																					  Operacion oper;
+																					  oper.op = "li";
+																					  oper.res = obtenerReg();
+																					  oper.arg1 = $1;
+																					  oper.arg2 = NULL;
+																					  insertaLC($$,finalLC($$),oper);
+																					  guardaResLC($$,oper.res);
+																					}                                        
 				;
 
 %%

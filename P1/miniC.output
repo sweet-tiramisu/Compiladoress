@@ -1,4 +1,4 @@
-Estado 75 conflictos: 1 desplazamiento/reducción
+Estado 95 conflictos: 1 desplazamiento/reducción
 
 
 Gramática
@@ -29,99 +29,115 @@ Gramática
    15          | IF LPAREN expression RPAREN statement ELSE statement
    16          | IF LPAREN expression RPAREN statement
    17          | WHILE LPAREN expression RPAREN statement
-   18          | PRINT LPAREN print_list RPAREN SEPARADOR
-   19          | READ LPAREN read_list RPAREN SEPARADOR
+   18          | DO statement WHILE LPAREN expression RPAREN SEPARADOR
+   19          | FOR LPAREN ID ASIG expression DPUNTOS expression RPAREN statement
+   20          | PRINT LPAREN print_list RPAREN SEPARADOR
+   21          | READ LPAREN read_list RPAREN SEPARADOR
 
-   20 print_list: print_item
-   21           | print_list COMA print_item
+   22 print_list: print_item
+   23           | print_list COMA print_item
 
-   22 print_item: expression
-   23           | STR
+   24 print_item: expression
+   25           | STR
 
-   24 read_list: ID
-   25          | read_list COMA ID
+   26 read_list: ID
+   27          | read_list COMA ID
 
-   26 expression: expression PLUSOP expression
-   27           | expression MINUSOP expression
-   28           | expression MULOP expression
-   29           | expression DIVOP expression
-   30           | LPAREN expression INTERR expression DPUNTOS expression RPAREN
-   31           | MINUSOP expression
-   32           | LPAREN expression RPAREN
-   33           | ID
-   34           | NUM
+   28 expression: expression PLUSOP expression
+   29           | expression MINUSOP expression
+   30           | expression MULOP expression
+   31           | expression DIVOP expression
+   32           | LPAREN expression INTERR expression DPUNTOS expression RPAREN
+   33           | MINUSOP expression
+   34           | LPAREN expression RPAREN
+   35           | expression MENOR expression
+   36           | expression MAYOR expression
+   37           | expression MENORIGUAL expression
+   38           | expression MAYORIGUAL expression
+   39           | expression IGUALIGUAL expression
+   40           | expression NOIGUAL expression
+   41           | ID
+   42           | NUM
 
 
 Terminales con las reglas donde aparecen
 
     $end (0) 0
     error (256)
-    STR <lexema> (258) 23
-    ID <lexema> (259) 2 7 8 9 10 13 24 25 33
-    NUM <lexema> (260) 6 34
+    STR <lexema> (258) 25
+    ID <lexema> (259) 2 7 8 9 10 13 19 26 27 41
+    NUM <lexema> (260) 6 42
     VAR (261) 3
     CONST (262) 4
     IF (263) 15 16
     ELSE (264) 15
-    WHILE (265) 17
-    PRINT (266) 18
-    READ (267) 19
-    SEPARADOR (268) 3 4 13 18 19
-    COMA (269) 8 10 21 25
-    PLUSOP (270) 26
-    MINUSOP (271) 27 31
-    MULOP (272) 28
-    DIVOP (273) 29
-    ASIG (274) 9 10 13
-    LPAREN (275) 2 15 16 17 18 19 30 32
-    RPAREN (276) 2 15 16 17 18 19 30 32
-    LLLAVE (277) 2 14
-    RLLAVE (278) 2 14
-    INTERR (279) 30
-    DPUNTOS (280) 30
-    UMINUS (281)
+    WHILE (265) 17 18
+    DO (266) 18
+    FOR (267) 19
+    PRINT (268) 20
+    READ (269) 21
+    SEPARADOR (270) 3 4 13 18 20 21
+    COMA (271) 8 10 23 27
+    PLUSOP (272) 28
+    MINUSOP (273) 29 33
+    MULOP (274) 30
+    DIVOP (275) 31
+    ASIG (276) 9 10 13 19
+    LPAREN (277) 2 15 16 17 18 19 20 21 32 34
+    RPAREN (278) 2 15 16 17 18 19 20 21 32 34
+    LLLAVE (279) 2 14
+    RLLAVE (280) 2 14
+    INTERR (281) 32
+    DPUNTOS (282) 19 32
+    MENOR (283) 35
+    MAYOR (284) 36
+    MAYORIGUAL (285) 38
+    MENORIGUAL (286) 37
+    IGUALIGUAL (287) 39
+    NOIGUAL (288) 40
+    UMINUS (289)
 
 
 No terminales con las reglas donde aparecen
 
-    $accept (27)
+    $accept (35)
         on left: 0
-    program (28)
+    program (36)
         on left: 2
         on right: 0
-    $@1 (29)
+    $@1 (37)
         on left: 1
         on right: 2
-    declarations <codigo> (30)
+    declarations <codigo> (38)
         on left: 3 4 5
         on right: 2 3 4
-    tipo (31)
+    tipo (39)
         on left: 6
         on right: 3 4
-    var_list (32)
+    var_list (40)
         on left: 7 8
         on right: 3 8
-    const_list <codigo> (33)
+    const_list <codigo> (41)
         on left: 9 10
         on right: 4 10
-    statement_list <codigo> (34)
+    statement_list <codigo> (42)
         on left: 11 12
         on right: 2 11 14
-    statement <codigo> (35)
-        on left: 13 14 15 16 17 18 19
-        on right: 11 15 16 17
-    print_list <codigo> (36)
-        on left: 20 21
-        on right: 18 21
-    print_item <codigo> (37)
+    statement <codigo> (43)
+        on left: 13 14 15 16 17 18 19 20 21
+        on right: 11 15 16 17 18 19
+    print_list <codigo> (44)
         on left: 22 23
-        on right: 20 21
-    read_list <codigo> (38)
+        on right: 20 23
+    print_item <codigo> (45)
         on left: 24 25
-        on right: 19 25
-    expression <codigo> (39)
-        on left: 26 27 28 29 30 31 32 33 34
-        on right: 9 10 13 15 16 17 22 26 27 28 29 30 31 32
+        on right: 22 23
+    read_list <codigo> (46)
+        on left: 26 27
+        on right: 21 27
+    expression <codigo> (47)
+        on left: 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42
+        on right: 9 10 13 15 16 17 18 19 24 28 29 30 31 32 33 34 35 36 37 38 39 40
 
 
 Estado 0
@@ -225,12 +241,14 @@ Estado 11
     ID      desplazar e ir al estado 15
     IF      desplazar e ir al estado 16
     WHILE   desplazar e ir al estado 17
-    PRINT   desplazar e ir al estado 18
-    READ    desplazar e ir al estado 19
-    LLLAVE  desplazar e ir al estado 20
-    RLLAVE  desplazar e ir al estado 21
+    DO      desplazar e ir al estado 18
+    FOR     desplazar e ir al estado 19
+    PRINT   desplazar e ir al estado 20
+    READ    desplazar e ir al estado 21
+    LLLAVE  desplazar e ir al estado 22
+    RLLAVE  desplazar e ir al estado 23
 
-    statement  ir al estado 22
+    statement  ir al estado 24
 
 
 Estado 12
@@ -244,25 +262,25 @@ Estado 13
 
     3 declarations: declarations VAR tipo • var_list SEPARADOR
 
-    ID  desplazar e ir al estado 23
+    ID  desplazar e ir al estado 25
 
-    var_list  ir al estado 24
+    var_list  ir al estado 26
 
 
 Estado 14
 
     4 declarations: declarations CONST tipo • const_list SEPARADOR
 
-    ID  desplazar e ir al estado 25
+    ID  desplazar e ir al estado 27
 
-    const_list  ir al estado 26
+    const_list  ir al estado 28
 
 
 Estado 15
 
    13 statement: ID • ASIG expression SEPARADOR
 
-    ASIG  desplazar e ir al estado 27
+    ASIG  desplazar e ir al estado 29
 
 
 Estado 16
@@ -270,147 +288,184 @@ Estado 16
    15 statement: IF • LPAREN expression RPAREN statement ELSE statement
    16          | IF • LPAREN expression RPAREN statement
 
-    LPAREN  desplazar e ir al estado 28
+    LPAREN  desplazar e ir al estado 30
 
 
 Estado 17
 
    17 statement: WHILE • LPAREN expression RPAREN statement
 
-    LPAREN  desplazar e ir al estado 29
+    LPAREN  desplazar e ir al estado 31
 
 
 Estado 18
 
-   18 statement: PRINT • LPAREN print_list RPAREN SEPARADOR
+   18 statement: DO • statement WHILE LPAREN expression RPAREN SEPARADOR
 
-    LPAREN  desplazar e ir al estado 30
+    ID      desplazar e ir al estado 15
+    IF      desplazar e ir al estado 16
+    WHILE   desplazar e ir al estado 17
+    DO      desplazar e ir al estado 18
+    FOR     desplazar e ir al estado 19
+    PRINT   desplazar e ir al estado 20
+    READ    desplazar e ir al estado 21
+    LLLAVE  desplazar e ir al estado 22
+
+    statement  ir al estado 32
 
 
 Estado 19
 
-   19 statement: READ • LPAREN read_list RPAREN SEPARADOR
+   19 statement: FOR • LPAREN ID ASIG expression DPUNTOS expression RPAREN statement
 
-    LPAREN  desplazar e ir al estado 31
+    LPAREN  desplazar e ir al estado 33
 
 
 Estado 20
+
+   20 statement: PRINT • LPAREN print_list RPAREN SEPARADOR
+
+    LPAREN  desplazar e ir al estado 34
+
+
+Estado 21
+
+   21 statement: READ • LPAREN read_list RPAREN SEPARADOR
+
+    LPAREN  desplazar e ir al estado 35
+
+
+Estado 22
 
    14 statement: LLLAVE • statement_list RLLAVE
 
     $default  reduce usando la regla 12 (statement_list)
 
-    statement_list  ir al estado 32
+    statement_list  ir al estado 36
 
 
-Estado 21
+Estado 23
 
     2 program: $@1 ID LPAREN RPAREN LLLAVE declarations statement_list RLLAVE •
 
     $default  reduce usando la regla 2 (program)
 
 
-Estado 22
+Estado 24
 
    11 statement_list: statement_list statement •
 
     $default  reduce usando la regla 11 (statement_list)
 
 
-Estado 23
+Estado 25
 
     7 var_list: ID •
 
     $default  reduce usando la regla 7 (var_list)
 
 
-Estado 24
+Estado 26
 
     3 declarations: declarations VAR tipo var_list • SEPARADOR
     8 var_list: var_list • COMA ID
 
-    SEPARADOR  desplazar e ir al estado 33
-    COMA       desplazar e ir al estado 34
-
-
-Estado 25
-
-    9 const_list: ID • ASIG expression
-
-    ASIG  desplazar e ir al estado 35
-
-
-Estado 26
-
-    4 declarations: declarations CONST tipo const_list • SEPARADOR
-   10 const_list: const_list • COMA ID ASIG expression
-
-    SEPARADOR  desplazar e ir al estado 36
-    COMA       desplazar e ir al estado 37
+    SEPARADOR  desplazar e ir al estado 37
+    COMA       desplazar e ir al estado 38
 
 
 Estado 27
 
-   13 statement: ID ASIG • expression SEPARADOR
+    9 const_list: ID • ASIG expression
 
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
-
-    expression  ir al estado 42
+    ASIG  desplazar e ir al estado 39
 
 
 Estado 28
 
-   15 statement: IF LPAREN • expression RPAREN statement ELSE statement
-   16          | IF LPAREN • expression RPAREN statement
+    4 declarations: declarations CONST tipo const_list • SEPARADOR
+   10 const_list: const_list • COMA ID ASIG expression
 
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
-
-    expression  ir al estado 43
+    SEPARADOR  desplazar e ir al estado 40
+    COMA       desplazar e ir al estado 41
 
 
 Estado 29
 
-   17 statement: WHILE LPAREN • expression RPAREN statement
+   13 statement: ID ASIG • expression SEPARADOR
 
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
 
-    expression  ir al estado 44
+    expression  ir al estado 46
 
 
 Estado 30
 
-   18 statement: PRINT LPAREN • print_list RPAREN SEPARADOR
+   15 statement: IF LPAREN • expression RPAREN statement ELSE statement
+   16          | IF LPAREN • expression RPAREN statement
 
-    STR      desplazar e ir al estado 45
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
 
-    print_list  ir al estado 46
-    print_item  ir al estado 47
-    expression  ir al estado 48
+    expression  ir al estado 47
 
 
 Estado 31
 
-   19 statement: READ LPAREN • read_list RPAREN SEPARADOR
+   17 statement: WHILE LPAREN • expression RPAREN statement
 
-    ID  desplazar e ir al estado 49
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
 
-    read_list  ir al estado 50
+    expression  ir al estado 48
 
 
 Estado 32
+
+   18 statement: DO statement • WHILE LPAREN expression RPAREN SEPARADOR
+
+    WHILE  desplazar e ir al estado 49
+
+
+Estado 33
+
+   19 statement: FOR LPAREN • ID ASIG expression DPUNTOS expression RPAREN statement
+
+    ID  desplazar e ir al estado 50
+
+
+Estado 34
+
+   20 statement: PRINT LPAREN • print_list RPAREN SEPARADOR
+
+    STR      desplazar e ir al estado 51
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    print_list  ir al estado 52
+    print_item  ir al estado 53
+    expression  ir al estado 54
+
+
+Estado 35
+
+   21 statement: READ LPAREN • read_list RPAREN SEPARADOR
+
+    ID  desplazar e ir al estado 55
+
+    read_list  ir al estado 56
+
+
+Estado 36
 
    11 statement_list: statement_list • statement
    14 statement: LLLAVE statement_list • RLLAVE
@@ -418,315 +473,481 @@ Estado 32
     ID      desplazar e ir al estado 15
     IF      desplazar e ir al estado 16
     WHILE   desplazar e ir al estado 17
-    PRINT   desplazar e ir al estado 18
-    READ    desplazar e ir al estado 19
-    LLLAVE  desplazar e ir al estado 20
-    RLLAVE  desplazar e ir al estado 51
+    DO      desplazar e ir al estado 18
+    FOR     desplazar e ir al estado 19
+    PRINT   desplazar e ir al estado 20
+    READ    desplazar e ir al estado 21
+    LLLAVE  desplazar e ir al estado 22
+    RLLAVE  desplazar e ir al estado 57
 
-    statement  ir al estado 22
+    statement  ir al estado 24
 
 
-Estado 33
+Estado 37
 
     3 declarations: declarations VAR tipo var_list SEPARADOR •
 
     $default  reduce usando la regla 3 (declarations)
 
 
-Estado 34
+Estado 38
 
     8 var_list: var_list COMA • ID
 
-    ID  desplazar e ir al estado 52
+    ID  desplazar e ir al estado 58
 
 
-Estado 35
+Estado 39
 
     9 const_list: ID ASIG • expression
 
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
 
-    expression  ir al estado 53
+    expression  ir al estado 59
 
 
-Estado 36
+Estado 40
 
     4 declarations: declarations CONST tipo const_list SEPARADOR •
 
     $default  reduce usando la regla 4 (declarations)
 
 
-Estado 37
+Estado 41
 
    10 const_list: const_list COMA • ID ASIG expression
 
-    ID  desplazar e ir al estado 54
-
-
-Estado 38
-
-   33 expression: ID •
-
-    $default  reduce usando la regla 33 (expression)
-
-
-Estado 39
-
-   34 expression: NUM •
-
-    $default  reduce usando la regla 34 (expression)
-
-
-Estado 40
-
-   31 expression: MINUSOP • expression
-
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
-
-    expression  ir al estado 55
-
-
-Estado 41
-
-   30 expression: LPAREN • expression INTERR expression DPUNTOS expression RPAREN
-   32           | LPAREN • expression RPAREN
-
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
-
-    expression  ir al estado 56
+    ID  desplazar e ir al estado 60
 
 
 Estado 42
 
-   13 statement: ID ASIG expression • SEPARADOR
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
+   41 expression: ID •
 
-    SEPARADOR  desplazar e ir al estado 57
-    PLUSOP     desplazar e ir al estado 58
-    MINUSOP    desplazar e ir al estado 59
-    MULOP      desplazar e ir al estado 60
-    DIVOP      desplazar e ir al estado 61
+    $default  reduce usando la regla 41 (expression)
 
 
 Estado 43
 
-   15 statement: IF LPAREN expression • RPAREN statement ELSE statement
-   16          | IF LPAREN expression • RPAREN statement
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
+   42 expression: NUM •
 
-    PLUSOP   desplazar e ir al estado 58
-    MINUSOP  desplazar e ir al estado 59
-    MULOP    desplazar e ir al estado 60
-    DIVOP    desplazar e ir al estado 61
-    RPAREN   desplazar e ir al estado 62
+    $default  reduce usando la regla 42 (expression)
 
 
 Estado 44
 
-   17 statement: WHILE LPAREN expression • RPAREN statement
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
+   33 expression: MINUSOP • expression
 
-    PLUSOP   desplazar e ir al estado 58
-    MINUSOP  desplazar e ir al estado 59
-    MULOP    desplazar e ir al estado 60
-    DIVOP    desplazar e ir al estado 61
-    RPAREN   desplazar e ir al estado 63
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 61
 
 
 Estado 45
 
-   23 print_item: STR •
+   32 expression: LPAREN • expression INTERR expression DPUNTOS expression RPAREN
+   34           | LPAREN • expression RPAREN
 
-    $default  reduce usando la regla 23 (print_item)
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 62
 
 
 Estado 46
 
-   18 statement: PRINT LPAREN print_list • RPAREN SEPARADOR
-   21 print_list: print_list • COMA print_item
+   13 statement: ID ASIG expression • SEPARADOR
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
 
-    COMA    desplazar e ir al estado 64
-    RPAREN  desplazar e ir al estado 65
+    SEPARADOR   desplazar e ir al estado 63
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+    IGUALIGUAL  desplazar e ir al estado 72
+    NOIGUAL     desplazar e ir al estado 73
 
 
 Estado 47
 
-   20 print_list: print_item •
+   15 statement: IF LPAREN expression • RPAREN statement ELSE statement
+   16          | IF LPAREN expression • RPAREN statement
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
 
-    $default  reduce usando la regla 20 (print_list)
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    RPAREN      desplazar e ir al estado 74
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+    IGUALIGUAL  desplazar e ir al estado 72
+    NOIGUAL     desplazar e ir al estado 73
 
 
 Estado 48
 
-   22 print_item: expression •
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
+   17 statement: WHILE LPAREN expression • RPAREN statement
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
 
-    PLUSOP   desplazar e ir al estado 58
-    MINUSOP  desplazar e ir al estado 59
-    MULOP    desplazar e ir al estado 60
-    DIVOP    desplazar e ir al estado 61
-
-    $default  reduce usando la regla 22 (print_item)
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    RPAREN      desplazar e ir al estado 75
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+    IGUALIGUAL  desplazar e ir al estado 72
+    NOIGUAL     desplazar e ir al estado 73
 
 
 Estado 49
 
-   24 read_list: ID •
+   18 statement: DO statement WHILE • LPAREN expression RPAREN SEPARADOR
 
-    $default  reduce usando la regla 24 (read_list)
+    LPAREN  desplazar e ir al estado 76
 
 
 Estado 50
 
-   19 statement: READ LPAREN read_list • RPAREN SEPARADOR
-   25 read_list: read_list • COMA ID
+   19 statement: FOR LPAREN ID • ASIG expression DPUNTOS expression RPAREN statement
 
-    COMA    desplazar e ir al estado 66
-    RPAREN  desplazar e ir al estado 67
+    ASIG  desplazar e ir al estado 77
 
 
 Estado 51
+
+   25 print_item: STR •
+
+    $default  reduce usando la regla 25 (print_item)
+
+
+Estado 52
+
+   20 statement: PRINT LPAREN print_list • RPAREN SEPARADOR
+   23 print_list: print_list • COMA print_item
+
+    COMA    desplazar e ir al estado 78
+    RPAREN  desplazar e ir al estado 79
+
+
+Estado 53
+
+   22 print_list: print_item •
+
+    $default  reduce usando la regla 22 (print_list)
+
+
+Estado 54
+
+   24 print_item: expression •
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
+
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+    IGUALIGUAL  desplazar e ir al estado 72
+    NOIGUAL     desplazar e ir al estado 73
+
+    $default  reduce usando la regla 24 (print_item)
+
+
+Estado 55
+
+   26 read_list: ID •
+
+    $default  reduce usando la regla 26 (read_list)
+
+
+Estado 56
+
+   21 statement: READ LPAREN read_list • RPAREN SEPARADOR
+   27 read_list: read_list • COMA ID
+
+    COMA    desplazar e ir al estado 80
+    RPAREN  desplazar e ir al estado 81
+
+
+Estado 57
 
    14 statement: LLLAVE statement_list RLLAVE •
 
     $default  reduce usando la regla 14 (statement)
 
 
-Estado 52
+Estado 58
 
     8 var_list: var_list COMA ID •
 
     $default  reduce usando la regla 8 (var_list)
 
 
-Estado 53
+Estado 59
 
     9 const_list: ID ASIG expression •
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
 
-    PLUSOP   desplazar e ir al estado 58
-    MINUSOP  desplazar e ir al estado 59
-    MULOP    desplazar e ir al estado 60
-    DIVOP    desplazar e ir al estado 61
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+    IGUALIGUAL  desplazar e ir al estado 72
+    NOIGUAL     desplazar e ir al estado 73
 
     $default  reduce usando la regla 9 (const_list)
 
 
-Estado 54
+Estado 60
 
    10 const_list: const_list COMA ID • ASIG expression
 
-    ASIG  desplazar e ir al estado 68
+    ASIG  desplazar e ir al estado 82
 
 
-Estado 55
+Estado 61
 
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
-   31           | MINUSOP expression •
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   33           | MINUSOP expression •
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
 
-    $default  reduce usando la regla 31 (expression)
-
-
-Estado 56
-
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
-   30           | LPAREN expression • INTERR expression DPUNTOS expression RPAREN
-   32           | LPAREN expression • RPAREN
-
-    PLUSOP   desplazar e ir al estado 58
-    MINUSOP  desplazar e ir al estado 59
-    MULOP    desplazar e ir al estado 60
-    DIVOP    desplazar e ir al estado 61
-    RPAREN   desplazar e ir al estado 69
-    INTERR   desplazar e ir al estado 70
+    $default  reduce usando la regla 33 (expression)
 
 
-Estado 57
+Estado 62
+
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   32           | LPAREN expression • INTERR expression DPUNTOS expression RPAREN
+   34           | LPAREN expression • RPAREN
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
+
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    RPAREN      desplazar e ir al estado 83
+    INTERR      desplazar e ir al estado 84
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+    IGUALIGUAL  desplazar e ir al estado 72
+    NOIGUAL     desplazar e ir al estado 73
+
+
+Estado 63
 
    13 statement: ID ASIG expression SEPARADOR •
 
     $default  reduce usando la regla 13 (statement)
 
 
-Estado 58
+Estado 64
 
-   26 expression: expression PLUSOP • expression
+   28 expression: expression PLUSOP • expression
 
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
 
-    expression  ir al estado 71
-
-
-Estado 59
-
-   27 expression: expression MINUSOP • expression
-
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
-
-    expression  ir al estado 72
+    expression  ir al estado 85
 
 
-Estado 60
+Estado 65
 
-   28 expression: expression MULOP • expression
+   29 expression: expression MINUSOP • expression
 
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
 
-    expression  ir al estado 73
-
-
-Estado 61
-
-   29 expression: expression DIVOP • expression
-
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
-
-    expression  ir al estado 74
+    expression  ir al estado 86
 
 
-Estado 62
+Estado 66
+
+   30 expression: expression MULOP • expression
+
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 87
+
+
+Estado 67
+
+   31 expression: expression DIVOP • expression
+
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 88
+
+
+Estado 68
+
+   35 expression: expression MENOR • expression
+
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 89
+
+
+Estado 69
+
+   36 expression: expression MAYOR • expression
+
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 90
+
+
+Estado 70
+
+   38 expression: expression MAYORIGUAL • expression
+
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 91
+
+
+Estado 71
+
+   37 expression: expression MENORIGUAL • expression
+
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 92
+
+
+Estado 72
+
+   39 expression: expression IGUALIGUAL • expression
+
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 93
+
+
+Estado 73
+
+   40 expression: expression NOIGUAL • expression
+
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 94
+
+
+Estado 74
 
    15 statement: IF LPAREN expression RPAREN • statement ELSE statement
    16          | IF LPAREN expression RPAREN • statement
@@ -734,270 +955,630 @@ Estado 62
     ID      desplazar e ir al estado 15
     IF      desplazar e ir al estado 16
     WHILE   desplazar e ir al estado 17
-    PRINT   desplazar e ir al estado 18
-    READ    desplazar e ir al estado 19
-    LLLAVE  desplazar e ir al estado 20
+    DO      desplazar e ir al estado 18
+    FOR     desplazar e ir al estado 19
+    PRINT   desplazar e ir al estado 20
+    READ    desplazar e ir al estado 21
+    LLLAVE  desplazar e ir al estado 22
 
-    statement  ir al estado 75
+    statement  ir al estado 95
 
 
-Estado 63
+Estado 75
 
    17 statement: WHILE LPAREN expression RPAREN • statement
 
     ID      desplazar e ir al estado 15
     IF      desplazar e ir al estado 16
     WHILE   desplazar e ir al estado 17
-    PRINT   desplazar e ir al estado 18
-    READ    desplazar e ir al estado 19
-    LLLAVE  desplazar e ir al estado 20
+    DO      desplazar e ir al estado 18
+    FOR     desplazar e ir al estado 19
+    PRINT   desplazar e ir al estado 20
+    READ    desplazar e ir al estado 21
+    LLLAVE  desplazar e ir al estado 22
 
-    statement  ir al estado 76
-
-
-Estado 64
-
-   21 print_list: print_list COMA • print_item
-
-    STR      desplazar e ir al estado 45
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
-
-    print_item  ir al estado 77
-    expression  ir al estado 48
+    statement  ir al estado 96
 
 
-Estado 65
+Estado 76
 
-   18 statement: PRINT LPAREN print_list RPAREN • SEPARADOR
+   18 statement: DO statement WHILE LPAREN • expression RPAREN SEPARADOR
 
-    SEPARADOR  desplazar e ir al estado 78
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
 
-
-Estado 66
-
-   25 read_list: read_list COMA • ID
-
-    ID  desplazar e ir al estado 79
+    expression  ir al estado 97
 
 
-Estado 67
+Estado 77
 
-   19 statement: READ LPAREN read_list RPAREN • SEPARADOR
+   19 statement: FOR LPAREN ID ASIG • expression DPUNTOS expression RPAREN statement
 
-    SEPARADOR  desplazar e ir al estado 80
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 98
 
 
-Estado 68
+Estado 78
+
+   23 print_list: print_list COMA • print_item
+
+    STR      desplazar e ir al estado 51
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    print_item  ir al estado 99
+    expression  ir al estado 54
+
+
+Estado 79
+
+   20 statement: PRINT LPAREN print_list RPAREN • SEPARADOR
+
+    SEPARADOR  desplazar e ir al estado 100
+
+
+Estado 80
+
+   27 read_list: read_list COMA • ID
+
+    ID  desplazar e ir al estado 101
+
+
+Estado 81
+
+   21 statement: READ LPAREN read_list RPAREN • SEPARADOR
+
+    SEPARADOR  desplazar e ir al estado 102
+
+
+Estado 82
 
    10 const_list: const_list COMA ID ASIG • expression
 
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
 
-    expression  ir al estado 81
-
-
-Estado 69
-
-   32 expression: LPAREN expression RPAREN •
-
-    $default  reduce usando la regla 32 (expression)
+    expression  ir al estado 103
 
 
-Estado 70
+Estado 83
 
-   30 expression: LPAREN expression INTERR • expression DPUNTOS expression RPAREN
+   34 expression: LPAREN expression RPAREN •
 
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
-
-    expression  ir al estado 82
+    $default  reduce usando la regla 34 (expression)
 
 
-Estado 71
+Estado 84
 
-   26 expression: expression • PLUSOP expression
-   26           | expression PLUSOP expression •
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
+   32 expression: LPAREN expression INTERR • expression DPUNTOS expression RPAREN
 
-    MULOP  desplazar e ir al estado 60
-    DIVOP  desplazar e ir al estado 61
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
 
-    $default  reduce usando la regla 26 (expression)
+    expression  ir al estado 104
 
 
-Estado 72
+Estado 85
 
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   27           | expression MINUSOP expression •
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
+   28 expression: expression • PLUSOP expression
+   28           | expression PLUSOP expression •
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
 
-    MULOP  desplazar e ir al estado 60
-    DIVOP  desplazar e ir al estado 61
-
-    $default  reduce usando la regla 27 (expression)
-
-
-Estado 73
-
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   28           | expression MULOP expression •
-   29           | expression • DIVOP expression
+    MULOP  desplazar e ir al estado 66
+    DIVOP  desplazar e ir al estado 67
 
     $default  reduce usando la regla 28 (expression)
 
 
-Estado 74
+Estado 86
 
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
-   29           | expression DIVOP expression •
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   29           | expression MINUSOP expression •
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
+
+    MULOP  desplazar e ir al estado 66
+    DIVOP  desplazar e ir al estado 67
 
     $default  reduce usando la regla 29 (expression)
 
 
-Estado 75
+Estado 87
+
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   30           | expression MULOP expression •
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
+
+    $default  reduce usando la regla 30 (expression)
+
+
+Estado 88
+
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   31           | expression DIVOP expression •
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
+
+    $default  reduce usando la regla 31 (expression)
+
+
+Estado 89
+
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   35           | expression MENOR expression •
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
+
+    PLUSOP   desplazar e ir al estado 64
+    MINUSOP  desplazar e ir al estado 65
+    MULOP    desplazar e ir al estado 66
+    DIVOP    desplazar e ir al estado 67
+
+    $default  reduce usando la regla 35 (expression)
+
+
+Estado 90
+
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   36           | expression MAYOR expression •
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
+
+    PLUSOP   desplazar e ir al estado 64
+    MINUSOP  desplazar e ir al estado 65
+    MULOP    desplazar e ir al estado 66
+    DIVOP    desplazar e ir al estado 67
+
+    $default  reduce usando la regla 36 (expression)
+
+
+Estado 91
+
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   38           | expression MAYORIGUAL expression •
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
+
+    PLUSOP   desplazar e ir al estado 64
+    MINUSOP  desplazar e ir al estado 65
+    MULOP    desplazar e ir al estado 66
+    DIVOP    desplazar e ir al estado 67
+
+    $default  reduce usando la regla 38 (expression)
+
+
+Estado 92
+
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   37           | expression MENORIGUAL expression •
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
+
+    PLUSOP   desplazar e ir al estado 64
+    MINUSOP  desplazar e ir al estado 65
+    MULOP    desplazar e ir al estado 66
+    DIVOP    desplazar e ir al estado 67
+
+    $default  reduce usando la regla 37 (expression)
+
+
+Estado 93
+
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   39           | expression IGUALIGUAL expression •
+   40           | expression • NOIGUAL expression
+
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+
+    $default  reduce usando la regla 39 (expression)
+
+
+Estado 94
+
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
+   40           | expression NOIGUAL expression •
+
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+
+    $default  reduce usando la regla 40 (expression)
+
+
+Estado 95
 
    15 statement: IF LPAREN expression RPAREN statement • ELSE statement
    16          | IF LPAREN expression RPAREN statement •
 
-    ELSE  desplazar e ir al estado 83
+    ELSE  desplazar e ir al estado 105
 
     ELSE      [reduce usando la regla 16 (statement)]
     $default  reduce usando la regla 16 (statement)
 
 
-Estado 76
+Estado 96
 
    17 statement: WHILE LPAREN expression RPAREN statement •
 
     $default  reduce usando la regla 17 (statement)
 
 
-Estado 77
+Estado 97
 
-   21 print_list: print_list COMA print_item •
+   18 statement: DO statement WHILE LPAREN expression • RPAREN SEPARADOR
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
 
-    $default  reduce usando la regla 21 (print_list)
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    RPAREN      desplazar e ir al estado 106
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+    IGUALIGUAL  desplazar e ir al estado 72
+    NOIGUAL     desplazar e ir al estado 73
 
 
-Estado 78
+Estado 98
 
-   18 statement: PRINT LPAREN print_list RPAREN SEPARADOR •
+   19 statement: FOR LPAREN ID ASIG expression • DPUNTOS expression RPAREN statement
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
 
-    $default  reduce usando la regla 18 (statement)
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    DPUNTOS     desplazar e ir al estado 107
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+    IGUALIGUAL  desplazar e ir al estado 72
+    NOIGUAL     desplazar e ir al estado 73
 
 
-Estado 79
+Estado 99
 
-   25 read_list: read_list COMA ID •
+   23 print_list: print_list COMA print_item •
 
-    $default  reduce usando la regla 25 (read_list)
-
-
-Estado 80
-
-   19 statement: READ LPAREN read_list RPAREN SEPARADOR •
-
-    $default  reduce usando la regla 19 (statement)
+    $default  reduce usando la regla 23 (print_list)
 
 
-Estado 81
+Estado 100
+
+   20 statement: PRINT LPAREN print_list RPAREN SEPARADOR •
+
+    $default  reduce usando la regla 20 (statement)
+
+
+Estado 101
+
+   27 read_list: read_list COMA ID •
+
+    $default  reduce usando la regla 27 (read_list)
+
+
+Estado 102
+
+   21 statement: READ LPAREN read_list RPAREN SEPARADOR •
+
+    $default  reduce usando la regla 21 (statement)
+
+
+Estado 103
 
    10 const_list: const_list COMA ID ASIG expression •
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
 
-    PLUSOP   desplazar e ir al estado 58
-    MINUSOP  desplazar e ir al estado 59
-    MULOP    desplazar e ir al estado 60
-    DIVOP    desplazar e ir al estado 61
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+    IGUALIGUAL  desplazar e ir al estado 72
+    NOIGUAL     desplazar e ir al estado 73
 
     $default  reduce usando la regla 10 (const_list)
 
 
-Estado 82
+Estado 104
 
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
-   30           | LPAREN expression INTERR expression • DPUNTOS expression RPAREN
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   32           | LPAREN expression INTERR expression • DPUNTOS expression RPAREN
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
 
-    PLUSOP   desplazar e ir al estado 58
-    MINUSOP  desplazar e ir al estado 59
-    MULOP    desplazar e ir al estado 60
-    DIVOP    desplazar e ir al estado 61
-    DPUNTOS  desplazar e ir al estado 84
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    DPUNTOS     desplazar e ir al estado 108
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+    IGUALIGUAL  desplazar e ir al estado 72
+    NOIGUAL     desplazar e ir al estado 73
 
 
-Estado 83
+Estado 105
 
    15 statement: IF LPAREN expression RPAREN statement ELSE • statement
 
     ID      desplazar e ir al estado 15
     IF      desplazar e ir al estado 16
     WHILE   desplazar e ir al estado 17
-    PRINT   desplazar e ir al estado 18
-    READ    desplazar e ir al estado 19
-    LLLAVE  desplazar e ir al estado 20
+    DO      desplazar e ir al estado 18
+    FOR     desplazar e ir al estado 19
+    PRINT   desplazar e ir al estado 20
+    READ    desplazar e ir al estado 21
+    LLLAVE  desplazar e ir al estado 22
 
-    statement  ir al estado 85
-
-
-Estado 84
-
-   30 expression: LPAREN expression INTERR expression DPUNTOS • expression RPAREN
-
-    ID       desplazar e ir al estado 38
-    NUM      desplazar e ir al estado 39
-    MINUSOP  desplazar e ir al estado 40
-    LPAREN   desplazar e ir al estado 41
-
-    expression  ir al estado 86
+    statement  ir al estado 109
 
 
-Estado 85
+Estado 106
+
+   18 statement: DO statement WHILE LPAREN expression RPAREN • SEPARADOR
+
+    SEPARADOR  desplazar e ir al estado 110
+
+
+Estado 107
+
+   19 statement: FOR LPAREN ID ASIG expression DPUNTOS • expression RPAREN statement
+
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 111
+
+
+Estado 108
+
+   32 expression: LPAREN expression INTERR expression DPUNTOS • expression RPAREN
+
+    ID       desplazar e ir al estado 42
+    NUM      desplazar e ir al estado 43
+    MINUSOP  desplazar e ir al estado 44
+    LPAREN   desplazar e ir al estado 45
+
+    expression  ir al estado 112
+
+
+Estado 109
 
    15 statement: IF LPAREN expression RPAREN statement ELSE statement •
 
     $default  reduce usando la regla 15 (statement)
 
 
-Estado 86
+Estado 110
 
-   26 expression: expression • PLUSOP expression
-   27           | expression • MINUSOP expression
-   28           | expression • MULOP expression
-   29           | expression • DIVOP expression
-   30           | LPAREN expression INTERR expression DPUNTOS expression • RPAREN
+   18 statement: DO statement WHILE LPAREN expression RPAREN SEPARADOR •
 
-    PLUSOP   desplazar e ir al estado 58
-    MINUSOP  desplazar e ir al estado 59
-    MULOP    desplazar e ir al estado 60
-    DIVOP    desplazar e ir al estado 61
-    RPAREN   desplazar e ir al estado 87
+    $default  reduce usando la regla 18 (statement)
 
 
-Estado 87
+Estado 111
 
-   30 expression: LPAREN expression INTERR expression DPUNTOS expression RPAREN •
+   19 statement: FOR LPAREN ID ASIG expression DPUNTOS expression • RPAREN statement
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
 
-    $default  reduce usando la regla 30 (expression)
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    RPAREN      desplazar e ir al estado 113
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+    IGUALIGUAL  desplazar e ir al estado 72
+    NOIGUAL     desplazar e ir al estado 73
+
+
+Estado 112
+
+   28 expression: expression • PLUSOP expression
+   29           | expression • MINUSOP expression
+   30           | expression • MULOP expression
+   31           | expression • DIVOP expression
+   32           | LPAREN expression INTERR expression DPUNTOS expression • RPAREN
+   35           | expression • MENOR expression
+   36           | expression • MAYOR expression
+   37           | expression • MENORIGUAL expression
+   38           | expression • MAYORIGUAL expression
+   39           | expression • IGUALIGUAL expression
+   40           | expression • NOIGUAL expression
+
+    PLUSOP      desplazar e ir al estado 64
+    MINUSOP     desplazar e ir al estado 65
+    MULOP       desplazar e ir al estado 66
+    DIVOP       desplazar e ir al estado 67
+    RPAREN      desplazar e ir al estado 114
+    MENOR       desplazar e ir al estado 68
+    MAYOR       desplazar e ir al estado 69
+    MAYORIGUAL  desplazar e ir al estado 70
+    MENORIGUAL  desplazar e ir al estado 71
+    IGUALIGUAL  desplazar e ir al estado 72
+    NOIGUAL     desplazar e ir al estado 73
+
+
+Estado 113
+
+   19 statement: FOR LPAREN ID ASIG expression DPUNTOS expression RPAREN • statement
+
+    ID      desplazar e ir al estado 15
+    IF      desplazar e ir al estado 16
+    WHILE   desplazar e ir al estado 17
+    DO      desplazar e ir al estado 18
+    FOR     desplazar e ir al estado 19
+    PRINT   desplazar e ir al estado 20
+    READ    desplazar e ir al estado 21
+    LLLAVE  desplazar e ir al estado 22
+
+    statement  ir al estado 115
+
+
+Estado 114
+
+   32 expression: LPAREN expression INTERR expression DPUNTOS expression RPAREN •
+
+    $default  reduce usando la regla 32 (expression)
+
+
+Estado 115
+
+   19 statement: FOR LPAREN ID ASIG expression DPUNTOS expression RPAREN statement •
+
+    $default  reduce usando la regla 19 (statement)

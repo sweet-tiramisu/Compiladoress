@@ -1,0 +1,27 @@
+main(){
+    const int a=5,b=10;
+    var int r1;
+    var int r2;
+    var int r3;
+    var int r4;
+    var int i;
+    i = 0;
+
+    // Comparaciones básicas
+    r1 = (a == b);  // Esperado: 0
+    r2 = (a != b);  // Esperado: 1
+    r3 = (a == 5);  // Esperado: 1
+    r4 = (b != 10); // Esperado: 0
+
+    print(r1);
+    print(r2);
+    print(r3);
+    print(r4);
+
+    // Bucle do-while usando comparación ==
+    do {
+        print(i);
+        i = i + 1;
+    } while (i != 3);
+}
+

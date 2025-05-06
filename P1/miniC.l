@@ -29,6 +29,8 @@ else                                        return ELSE;
 while                                       return WHILE;
 print                                       return PRINT;
 read                                        return READ;
+do                                          return DO;
+for                                         return FOR;
 
 
 ({letra}|_)({letra}|{digito}|_){0,30}       {yylval.lexema=strdup(yytext);return ID;}
