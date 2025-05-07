@@ -8,7 +8,9 @@
 Lista tablaSimb;
 int contCadenas=1;
 int contadorEtiquetas = 1;
+int contaErrorSemantico = 0;
 
+extern int contaErrorLexico;
 extern char *yytext;
 extern int yylineno;
 extern int yylex();
@@ -56,7 +58,14 @@ ListaC codigo;
 %expect 1
 %%
 
-program 		: 	{tablaSimb=creaLS();} ID LPAREN RPAREN LLLAVE declarations statement_list RLLAVE {/*imprimirTablaS();*/ concatenaLC($6,$7); imprimeLS(); imprimirLC($6); liberaLS(tablaSimb); liberaLC($6); liberaLC($7);}
+program 		: 	{tablaSimb=creaLS();} ID LPAREN RPAREN LLLAVE declarations statement_list RLLAVE {if((contaErrorLexico==0) &&(contaErrorSemantico==0)){
+																										/*imprimirTablaS();*/
+																										 concatenaLC($6,$7);
+																										 imprimeLS(); 
+																										 imprimirLC($6);
+																										 liberaLS(tablaSimb);
+																										 liberaLC($6); liberaLC($7);
+																										}else {printf("Se han detectado %d errores lexicos y %d errores semanticos\n",contaErrorLexico,contaErrorSemantico);}}
 				;
 
 declarations 	: 	declarations VAR tipo var_list SEPARADOR                      	{$$ = $1;}
@@ -69,11 +78,11 @@ declarations 	: 	declarations VAR tipo var_list SEPARADOR                      	
 tipo            : 	NUM                                                              
                 ;
 
-var_list		:  	ID 																{if (!perteneceTablaS($1)) insertaTablaIdentificador($1,VARIABLE); else printf("Error en linea %d : %s ya declarada \n",yylineno,$1);}
-				| 	var_list COMA ID 												{if (!perteneceTablaS($3)) insertaTablaIdentificador($3,VARIABLE); else printf("Error en linea %d : %s ya declarada \n",yylineno,$3);}
+var_list		:  	ID 																{if (!perteneceTablaS($1)){insertaTablaIdentificador($1,VARIABLE);} else {printf("Error en linea %d : %s ya declarada \n",yylineno,$1);contaErrorSemantico++;}}
+				| 	var_list COMA ID 												{if (!perteneceTablaS($3)){insertaTablaIdentificador($3,VARIABLE);} else {printf("Error en linea %d : %s ya declarada \n",yylineno,$3);contaErrorSemantico++;}}
 				;
 		
-const_list 		: 	ID ASIG expression 												{if (!perteneceTablaS($1)) insertaTablaIdentificador($1,CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,$1);
+const_list 		: 	ID ASIG expression 												{if (!perteneceTablaS($1)){insertaTablaIdentificador($1,CONSTANTE);} else {printf("Error en linea %d : %s ya declarada \n",yylineno,$1);contaErrorSemantico++;}
 																					 $$ = $3;
 																					 Operacion oper;
 																					 oper.op = "sw";
@@ -83,7 +92,7 @@ const_list 		: 	ID ASIG expression 												{if (!perteneceTablaS($1)) insert
 																					 insertaLC($$,finalLC($$),oper);
 																					 liberarReg(oper.res);
 																					}
-				| 	const_list COMA ID ASIG expression 								{if (!perteneceTablaS($3)) insertaTablaIdentificador($3,CONSTANTE); else printf("Error en linea %d : %s ya declarada \n",yylineno,$3);
+				| 	const_list COMA ID ASIG expression 								{if (!perteneceTablaS($3)){insertaTablaIdentificador($3,CONSTANTE);} else {printf("Error en linea %d : %s ya declarada \n",yylineno,$3);contaErrorSemantico++;}
 																					 $$ = $1;
 																					 concatenaLC($$,$5);
 																					 Operacion oper;
@@ -104,8 +113,8 @@ statement_list  :  	statement_list statement                                    
                 |   %empty 															{$$ = creaLC();}                                                           
                 ;				
 
-statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n",yylineno,$1); 
-																					else if (esConstante($1)) printf("Error en linea %d : %s es constante\n", yylineno, $1);
+statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)){ printf("Error en linea %d : %s no declarada \n",yylineno,$1); contaErrorSemantico++;}
+																					else if (esConstante($1)){ printf("Error en linea %d : %s es constante\n", yylineno, $1);contaErrorSemantico++;}
 																					$$ = $3;
 																					Operacion oper;
 																					oper.op = "sw";
@@ -188,7 +197,7 @@ statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)
 																					operacion2.arg1 = obtenerEtiqueta();
 																					operacion2.arg2 = NULL;
 																					insertaLC($$,finalLC($$),operacion2);
-																					//liberaLC($3);
+																					
 
 																					concatenaLC($$,$5);																					
 																					liberaLC($5);																																																													
@@ -208,6 +217,7 @@ statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)
 																					operacion4.arg2 = NULL;
 																					insertaLC($$,finalLC($$),operacion4);
 																					liberarReg(recuperaResLC($3));
+																					//liberaLC($3);
 																					
 																				   }
 				|	DO statement WHILE LPAREN expression RPAREN SEPARADOR		   {$$ = creaLC();
@@ -232,8 +242,8 @@ statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)
 																					liberarReg(operacion2.res);
 																					}
 				|	FOR LPAREN ID ASIG expression DPUNTOS expression RPAREN statement	{
-																					if(!perteneceTablaS($3)){printf("Error en linea %d : %s no declarada \n",yylineno,$3);} // ¿quitar el %s y poner variable?
-																					else if (esConstante($3)) printf("Error en linea %d : %s es constante, no se puede modificar\n", yylineno, $3);
+																					if(!perteneceTablaS($3)){ printf("Error en linea %d : %s no declarada \n",yylineno,$3);contaErrorSemantico++;} // ¿quitar el %s y poner variable?
+																					else if (esConstante($3)){ printf("Error en linea %d : %s es constante, no se puede modificar\n", yylineno, $3);contaErrorSemantico++;}
 																					
 																					// 1. inicio = $5
 																					$$ = $5;
@@ -287,7 +297,7 @@ statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)
 																					insertaLC($$, finalLC($$), almacenar);
 
 																					Operacion salto;
-																					salto.op = "j";
+																					salto.op = "b";
 																					salto.res = empiezaBucle;
 																					salto.arg1 = NULL;
 																					salto.arg2 = NULL;
@@ -309,7 +319,7 @@ statement 		: 	ID ASIG expression SEPARADOR 								   {if (!perteneceTablaS($1)
                 ;
 
 print_list      : 	print_item                                                     {$$ = $1;}
-                | 	print_list COMA print_item                                     {$$ = $1; concatenaLC($$,$3);}
+                | 	print_list COMA print_item                                     {$$ = $1; concatenaLC($$,$3); liberaLC($3);}
                 ;
 
 print_item 		: 	expression													   { $$ = $1;
@@ -366,8 +376,8 @@ print_item 		: 	expression													   { $$ = $1;
 																					}
 				;
 
-read_list   	: 	ID 															    {if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n", yylineno,$1);
-																					else if (esConstante($1)) printf("Error en linea %d : %s es constante\n", yylineno, $1);
+read_list   	: 	ID 															    {if (!perteneceTablaS($1)){ printf("Error en linea %d : %s no declarada \n", yylineno,$1); contaErrorSemantico++;}
+																					else if (esConstante($1)){ printf("Error en linea %d : %s es constante\n", yylineno, $1); contaErrorSemantico++;}
 																					 $$ = creaLC();
 																					 Operacion operacion1;
 																					 operacion1.op = "li";
@@ -395,8 +405,8 @@ read_list   	: 	ID 															    {if (!perteneceTablaS($1)) printf("Error e
 
 																					 
 																					}
-				| 	read_list COMA ID 												{if (!perteneceTablaS($3)) printf("Error en linea %d : %s no declarada \n", yylineno, $3);
-																					else if (esConstante($3)) printf("Error en linea %d : %s es constante\n", yylineno, $3);
+				| 	read_list COMA ID 												{if (!perteneceTablaS($3)){ printf("Error en linea %d : %s no declarada \n", yylineno, $3);contaErrorSemantico++;}
+																					 else if (esConstante($3)){ printf("Error en linea %d : %s es constante\n", yylineno, $3);contaErrorSemantico++;}
 																					 $$ = $1;
 																					 Operacion operacion1;
 																					 operacion1.op = "li";
@@ -449,8 +459,53 @@ expression		: 	expression PLUSOP expression              						{ $$ = $1; concat
 																					  liberarReg(oper.arg1); liberarReg(oper.arg2); liberaLC($3);
 																					}
                 | 	LPAREN expression INTERR expression DPUNTOS expression RPAREN   { $$=$2;
-																					  Operacion oper;
+																					  Operacion etiqueta1;
+																					  etiqueta1.op= "etiqueta";
+																					  etiqueta1.res= obtenerEtiqueta();
+																					  etiqueta1.arg1 = NULL;
+																					  etiqueta1.arg2 = NULL;
 
+																					  Operacion etiqueta2;
+																					  etiqueta2.op = "etiqueta";
+																					  etiqueta2.res = obtenerEtiqueta();
+																					  etiqueta2.arg1 = NULL;
+																					  etiqueta2.arg2 = NULL;
+
+																					  Operacion beqz;
+																					  beqz.op = "beqz";
+																					  beqz.res = recuperaResLC($2);
+																					  beqz.arg1 = etiqueta1.res;
+																					  beqz.arg2 = NULL;
+
+																					  Operacion salto;
+																					  salto.op = "b";
+																					  salto.res = etiqueta2.res;
+																					  salto.arg1 = NULL;
+																					  salto.arg2 = NULL;
+
+																					  Operacion mover1;
+																					  mover1.op = "move";
+																					  mover1.res = recuperaResLC($2);
+																					  mover1.arg1 = recuperaResLC($4);
+																					  mover1.arg2 = NULL;
+
+																					  Operacion mover2;
+																					  mover2.op = "move";
+																					  mover2.res = recuperaResLC($2);
+																					  mover2.arg1 = recuperaResLC($6);
+																					  mover2.arg2 = NULL;
+
+																					  insertaLC($$,finalLC($$),beqz);
+																					  concatenaLC($$,$4);
+																					  insertaLC($$,finalLC($$),mover1);
+																					  insertaLC($$,finalLC($$),salto);
+																					  insertaLC($$,finalLC($$),etiqueta1);
+																					  concatenaLC($$,$6);
+																					  insertaLC($$,finalLC($$),mover2);
+																					  insertaLC($$,finalLC($$),etiqueta2);
+																					  liberaLC($4);liberaLC($6);
+																					  liberarReg(recuperaResLC($4));
+																					  liberarReg(recuperaResLC($6));
 																					}
                 | 	MINUSOP expression %prec UMINUS                                 {$$ = $2;
 																					 Operacion oper;
@@ -503,6 +558,7 @@ expression		: 	expression PLUSOP expression              						{ $$ = $1; concat
 																					  insertaLC($$,finalLC($$),mayor);
 																					  insertaLC($$,finalLC($$),negado);
 																					  guardaResLC($$,recuperaResLC($3));
+																					  liberarReg(recuperaResLC($1));
 																					  liberaLC($3);																					  
 																					}	
 			|	expression MAYORIGUAL expression									{ $$ = $1;			// Si se tiene a < b -> ¬(a < b) = a >= b
@@ -552,7 +608,7 @@ expression		: 	expression PLUSOP expression              						{ $$ = $1; concat
 																					  xor.arg2 = recuperaResLC($3);
 																					  
 																					  Operacion distinto;
-																					  distinto.op = "sltu";
+																					  distinto.op = "sltiu";
 																					  distinto.res = xor.res;
 																					  distinto.arg1 = xor.res;
 																					  distinto.arg2 = "0";
@@ -564,8 +620,7 @@ expression		: 	expression PLUSOP expression              						{ $$ = $1; concat
 																					  liberaLC($3);
 																					}																						
 																																				
-				| 	ID 																{ if (!perteneceTablaS($1)) printf("Error en linea %d : %s no declarada \n", 
-																					  yylineno, $1); 
+				| 	ID 																{ if (!perteneceTablaS($1)){ printf("Error en linea %d : variable %s no declarada \n",yylineno, $1);contaErrorSemantico++;}
 																					  $$ = creaLC();
 																					  Operacion oper;
 																					  oper.op = "lw";
@@ -670,7 +725,7 @@ void imprimeLS(){	// .data del programa
 	while(p!=finalLS(tablaSimb)){
 		Simbolo aux = recuperaLS(tablaSimb,p);
 		if(aux.tipo == CADENA){
-			printf("str%d: \n\t.asciiz %s \n",aux.valor,aux.nombre);
+			printf("$str%d: \n\t.asciiz %s \n",aux.valor,aux.nombre);
 		}
 		p = siguienteLS(tablaSimb,p);
 	}

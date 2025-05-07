@@ -9,7 +9,7 @@ main() {
     for (i = 1 : 5) {
         resultado = resultado + i;
     }
-    print(resultado); // Esperado: 15
+    print(resultado,"\n"); // Esperado: 15
 
     // Bucle 2: Sumar del 3 al 7
     resultado = 0;

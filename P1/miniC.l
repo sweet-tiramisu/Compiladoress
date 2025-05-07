@@ -3,7 +3,7 @@
 %{
 #include "miniC.tab.h"
 #include "listaCodigo.h"
-void error_lexico();
+int contaErrorLexico=0;
 
 %}
 digito              [0-9]
@@ -33,8 +33,8 @@ do                                          return DO;
 for                                         return FOR;
 
 
-({letra}|_)({letra}|{digito}|_){0,30}       {yylval.lexema=strdup(yytext);return ID;}
-{entero}                                    {yylval.lexema=strdup(yytext); if(atoll(yytext) > 2147483648) printf("ERROR: Entero fuera de rango en la linea %d\n", yylineno); return NUM; }
+({letra}|_)({letra}|{digito}|_){0,30}       {yylval.lexema=strdup(yytext); if(yyleng>32){printf("ERROR: Identificador %s, excede la longitud máxima en la linea %d\n",yytext, yylineno); contaErrorLexico++;} return ID;}
+{entero}                                    {yylval.lexema=strdup(yytext); if(atoll(yytext) > 2147483648){printf("ERROR: Entero fuera de rango en la linea %d\n", yylineno); contaErrorLexico++;} return NUM;}
 
 \"([^"]|{escape})*\"                        {yylval.lexema=strdup(yytext);return STR;}
 
@@ -59,11 +59,8 @@ for                                         return FOR;
 "=="                                        return IGUALIGUAL;
 "!="                                        return NOIGUAL;
 
-[^\n\t]                                     error_lexico();
+[^/*$_=(){};,+\-a-zA-Z0-9 \n\t\r]           {printf("Error lexico en la cadena %s en linea %d\n",yytext, yylineno); contaErrorLexico++;}
+
 
 
 %%
-
-void error_lexico() {
-    printf("Carácter no reconocido en la linea %d: %s\n", yylineno, yytext);
-}

@@ -48,25 +48,25 @@ main:
 	sltu $t5, $t5, 0
 	sw $t0, _r4
 	lw $t0, _r1
-	li $v0, 1
 	move $a0, $t0
+	li $v0, 1
 	syscall
 	lw $t0, _r2
-	li $v0, 1
 	move $a0, $t0
+	li $v0, 1
 	syscall
 	lw $t0, _r3
-	li $v0, 1
 	move $a0, $t0
+	li $v0, 1
 	syscall
 	lw $t0, _r4
-	li $v0, 1
 	move $a0, $t0
+	li $v0, 1
 	syscall
 $l1: 
 	lw $t0, _i
-	li $v0, 1
 	move $a0, $t0
+	li $v0, 1
 	syscall
 	lw $t0, _i
 	li $t1, 1
